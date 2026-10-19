@@ -14,27 +14,11 @@ const bootstrapBundle = fs.readFileSync(entryFile, 'utf8')
   .replace('void bootstrap();', '')
   .concat('\nmodule.exports = { bootstrap };\n');
 fs.writeFileSync(path.join(outputDir, 'main.js'), bootstrapBundle);
-fs.writeFileSync(path.join(functionDir, 'index.js'), "module.exports = require('../dist-build/src/main');\n");
-const nestFiles = [];
-function collectNestFiles(directory) {
-  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
-    const file = path.join(directory, entry.name);
-    if (entry.isDirectory()) collectNestFiles(file);
-    else if (file.endsWith('.js')) nestFiles.push(file);
-  }
-}
-collectNestFiles(outputDir);
-for (const file of nestFiles) {
-  const relative = path.relative(outputDir, file);
-  const destination = path.join(functionDir, 'dist-build', 'src', relative);
-  fs.mkdirSync(path.dirname(destination), { recursive: true });
-  if (path.resolve(file) !== path.join(functionDir, 'index.js')) fs.copyFileSync(file, destination);
-}
-
-const handler = `const { bootstrap } = require('../dist-build/src/main');
+fs.writeFileSync(path.join(functionDir, 'index.js'), `const { bootstrap } = require('../dist-build/src/main');
+const { createServer } = require('node:http');
 
 let appPromise;
-let callbackPromise;
+let handlerPromise;
 
 function setCors(request, response) {
   const origin = request.headers.origin;
@@ -57,11 +41,13 @@ module.exports = async (request, response) => {
   try {
     appPromise ??= bootstrap();
     const app = await appPromise;
-    callbackPromise ??= new Promise((resolve) => app.getHttpAdapter().getInstance().listen(0, '127.0.0.1', () => resolve(app.getHttpAdapter().getInstance())));
-    const callback = await callbackPromise;
-    await new Promise((resolve, reject) => {
-      callback(request, response, (error) => error ? reject(error) : resolve());
+    handlerPromise ??= new Promise((resolve, reject) => {
+      const server = createServer(app.getHttpAdapter().getInstance());
+      server.listen(0, '127.0.0.1', () => resolve((req, res) => app.getHttpAdapter().getInstance()(req, res)));
+      server.on('error', reject);
     });
+    const handler = await handlerPromise;
+    handler(request, response);
   } catch (error) {
     console.error('Nest Vercel handler failed', error);
     if (!response.headersSent) {
@@ -71,5 +57,4 @@ module.exports = async (request, response) => {
     }
   }
 };
-`;
-fs.writeFileSync(path.join(functionDir, 'handler.js'), handler);
+`);

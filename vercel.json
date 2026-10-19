@@ -3,12 +3,12 @@
   "version": 2,
   "buildCommand": "npm run build:vercel",
   "functions": {
-    "dist-build/src/main.js": {
-      "includeFiles": "src/generated/**"
+    "api/index.js": {
+      "includeFiles": "src/generated/prisma/**"
     }
   },
   "rewrites": [
-    { "source": "/api/v1/(.*)", "destination": "/dist-build/src/main.js" },
-    { "source": "/(.*)", "destination": "/dist-build/src/main.js" }
+    { "source": "/api/v1/(.*)", "destination": "/api/index.js" },
+    { "source": "/(.*)", "destination": "/api/index.js" }
   ]
 }

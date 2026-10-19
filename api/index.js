@@ -2,7 +2,8 @@ const { bootstrap } = require('../dist-build/src/main');
 const { createServer } = require('node:http');
 
 let appPromise;
-let handlerPromise;
+let server;
+let handler;
 
 function setCors(request, response) {
   const origin = request.headers.origin;
@@ -25,12 +26,14 @@ module.exports = async (request, response) => {
   try {
     appPromise ??= bootstrap();
     const app = await appPromise;
-    handlerPromise ??= new Promise((resolve, reject) => {
-      const server = createServer(app.getHttpAdapter().getInstance());
-      server.listen(0, '127.0.0.1', () => resolve((req, res) => app.getHttpAdapter().getInstance()(req, res)));
-      server.on('error', reject);
-    });
-    const handler = await handlerPromise;
+    if (!server) {
+      server = createServer(app.getHttpAdapter().getInstance());
+      await new Promise((resolve, reject) => {
+        server.once('error', reject);
+        server.listen(0, '127.0.0.1', resolve);
+      });
+      handler = app.getHttpAdapter().getInstance();
+    }
     handler(request, response);
   } catch (error) {
     console.error('Nest Vercel handler failed', error);

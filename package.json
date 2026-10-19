@@ -49,8 +49,7 @@
     "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.46.2",
-    "@vercel/node": "^5.3.21"
+    "typescript-eslint": "^8.46.2"
   },
   "prisma": {
     "schema": "prisma/schema.prisma"

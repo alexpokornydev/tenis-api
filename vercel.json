@@ -3,12 +3,12 @@
   "version": 2,
   "buildCommand": "npm run build:vercel",
   "functions": {
-    "api/handler.js": {
+    "api/index.js": {
       "includeFiles": "dist-build/src/**"
     }
   },
   "rewrites": [
-    { "source": "/api/v1/(.*)", "destination": "/api/handler.js" },
-    { "source": "/(.*)", "destination": "/api/handler.js" }
+    { "source": "/api/v1/(.*)", "destination": "/api/index.js" },
+    { "source": "/(.*)", "destination": "/api/index.js" }
   ]
 }

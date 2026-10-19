@@ -1,3 +1,3 @@
 import 'reflect-metadata';
-declare function bootstrap(): Promise<import("@nestjs/common").INestApplication<any>>;
+declare function bootstrap(): Promise<void>;
 export { bootstrap };

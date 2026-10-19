@@ -31,8 +31,8 @@ Health check: `GET http://localhost:3000/api/v1/health` (public). API routes are
 3. From **Project Settings → Database → Connection string**, use the Session pooler URI for a long-lived Node API or the direct connection string when your host supports IPv6. Add `?sslmode=require` if it is not already present. Keep the database password only in the server's environment.
 4. Set `DATABASE_URL` to that connection string. The API uses Prisma's PostgreSQL driver adapter.
 5. Apply migrations with `npx prisma migrate deploy`.
-6. Set `CORS_ORIGINS` to exact frontend origins. Do not use `*` with credentials in production.
-7. Deploy the API with `HOST=0.0.0.0`, a host-provided `PORT`, and TLS terminated by your hosting provider/reverse proxy.
+6. For a standalone Nest deployment, set `CORS_ORIGINS` to exact browser frontend origins. Native mobile clients do not use browser CORS enforcement.
+7. Prefer deploying the Nest API as a persistent Node service with `HOST=0.0.0.0`, a host-provided `PORT`, and TLS terminated by your hosting provider/reverse proxy. If retaining Vercel as a gateway, set `API_UPSTREAM_URL` to that separately deployed Nest API origin (for example, `https://your-api-host.example`) so Vercel can proxy requests without booting Nest or Prisma inside each function.
 
 Do **not** put a Supabase service-role key, database password, or API secret into the Expo app. Supabase Auth's public anon/publishable key belongs in the client when the app is later connected; privileged secrets remain server-only.
 
@@ -138,7 +138,7 @@ npm run lint
 
 ## Not implemented yet / production checklist
 
-- No live Supabase project has been configured. The app can run in demo mode, but real accounts, reservations, hour balances, and realtime require the API/Supabase environment setup described above.
+- Vercel gateway deployment requires `API_UPSTREAM_URL` to point at a separately hosted persistent Nest API. A Vercel serverless function should not run the Nest service's process-level interval scheduler; the persistent API host is required for reliable reservation settlement.
 - Provisioning/signup hook for `profiles` and owner-controlled staff role assignment.
 - Attendance verification and policy for no-shows, early/late completion, cancellations after a session ends, and credit refunds.
 - Payment collection, receipts, refunds, and trainer payroll/statistics.

@@ -3,7 +3,19 @@ const { bootstrap } = require('../dist-build/src/main');
 let bootstrapPromise;
 let serverPromise;
 
+function cors(request, response) {
+  const origin = request.headers.origin;
+  if (origin) response.setHeader('Access-Control-Allow-Origin', origin);
+  response.setHeader('Vary', 'Origin');
+  response.setHeader('Access-Control-Allow-Credentials', 'true');
+  response.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS');
+  response.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,apikey');
+  response.setHeader('Access-Control-Max-Age', '86400');
+}
+
 module.exports = async (request, response) => {
+  cors(request, response);
+  if (request.method === 'OPTIONS') { response.statusCode = 204; response.end(); return; }
   try {
     bootstrapPromise ??= bootstrap();
     const app = await bootstrapPromise;

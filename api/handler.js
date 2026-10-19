@@ -1,9 +1,9 @@
 const { bootstrap } = require('../dist-build/src/main');
 
-let bootstrapPromise;
-let serverPromise;
+let appPromise;
+let callbackPromise;
 
-function cors(request, response) {
+function setCors(request, response) {
   const origin = request.headers.origin;
   if (origin) response.setHeader('Access-Control-Allow-Origin', origin);
   response.setHeader('Vary', 'Origin');
@@ -14,25 +14,27 @@ function cors(request, response) {
 }
 
 module.exports = async (request, response) => {
-  cors(request, response);
-  if (request.method === 'OPTIONS') { response.statusCode = 204; response.end(); return; }
+  setCors(request, response);
+  if (request.method === 'OPTIONS') {
+    response.statusCode = 204;
+    response.end();
+    return;
+  }
+
   try {
-    bootstrapPromise ??= bootstrap();
-    const app = await bootstrapPromise;
-    serverPromise ??= app.getHttpAdapter().getInstance().listen(0, '127.0.0.1');
-    const server = await serverPromise;
-    const address = server.address();
-    const target = new URL(request.url, 'http://127.0.0.1');
-    target.port = String(address.port);
-    const headers = { ...request.headers };
-    delete headers.host;
-    const upstream = await fetch(target, { method: request.method, headers, body: ['GET', 'HEAD'].includes(request.method) ? undefined : request, duplex: 'half' });
-    response.statusCode = upstream.status;
-    upstream.headers.forEach((value, key) => { if (key.toLowerCase() !== 'transfer-encoding') response.setHeader(key, value); });
-    response.end(Buffer.from(await upstream.arrayBuffer()));
+    appPromise ??= bootstrap();
+    const app = await appPromise;
+    callbackPromise ??= new Promise((resolve) => app.getHttpAdapter().getInstance().listen(0, '127.0.0.1', () => resolve(app.getHttpAdapter().getInstance())));
+    const callback = await callbackPromise;
+    await new Promise((resolve, reject) => {
+      callback(request, response, (error) => error ? reject(error) : resolve());
+    });
   } catch (error) {
     console.error('Nest Vercel handler failed', error);
-    if (!response.headersSent) response.statusCode = 500;
-    response.end(JSON.stringify({ statusCode: 500, message: 'Internal server error' }));
+    if (!response.headersSent) {
+      response.statusCode = 500;
+      response.setHeader('Content-Type', 'application/json');
+      response.end(JSON.stringify({ statusCode: 500, message: 'Internal server error' }));
+    }
   }
 };

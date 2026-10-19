@@ -23,10 +23,13 @@ async function bootstrap() {
     app.enableShutdownHooks();
     const port = config.get('PORT', 3000);
     const host = config.get('HOST', '0.0.0.0');
-    if (config.get('VERCEL') === '1')
+    if (config.get('VERCEL') === '1') {
+        await app.init();
         return app;
+    }
     await app.listen(port, host);
     return app;
 }
-void bootstrap();
+
 //# sourceMappingURL=main.js.map
+module.exports = { bootstrap };

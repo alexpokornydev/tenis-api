@@ -22,7 +22,10 @@ async function bootstrap() {
   app.enableShutdownHooks();
   const port = config.get<number>('PORT', 3000);
   const host = config.get<string>('HOST', '0.0.0.0');
-  if (config.get<string>('VERCEL') === '1') return app;
+  if (config.get<string>('VERCEL') === '1') {
+    await app.init();
+    return app;
+  }
   await app.listen(port, host);
   return app;
 }

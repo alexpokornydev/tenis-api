@@ -4,39 +4,72 @@ const path = require('node:path');
 const outputDir = path.resolve('dist-build/src');
 const entryFile = path.join(outputDir, 'main.js');
 const functionDir = path.resolve('api');
-const functionFile = path.join(functionDir, 'index.js');
 
 if (!fs.existsSync(entryFile)) {
   throw new Error(`Nest build output not found: ${entryFile}`);
 }
 
 fs.mkdirSync(functionDir, { recursive: true });
-const bootstrapBundle = fs.readFileSync(entryFile, 'utf8').replace('void bootstrap();', '').replace('async function bootstrap()', 'async function bootstrap()').concat('\nmodule.exports = { bootstrap };\n');
-fs.writeFileSync(functionFile, bootstrapBundle);
+const bootstrapBundle = fs.readFileSync(entryFile, 'utf8')
+  .replace('void bootstrap();', '')
+  .concat('\nmodule.exports = { bootstrap };\n');
+fs.writeFileSync(path.join(outputDir, 'main.js'), bootstrapBundle);
+fs.writeFileSync(path.join(functionDir, 'index.js'), "module.exports = require('../dist-build/src/main');\n");
+const nestFiles = [];
+function collectNestFiles(directory) {
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    const file = path.join(directory, entry.name);
+    if (entry.isDirectory()) collectNestFiles(file);
+    else if (file.endsWith('.js')) nestFiles.push(file);
+  }
+}
+collectNestFiles(outputDir);
+for (const file of nestFiles) {
+  const relative = path.relative(outputDir, file);
+  const destination = path.join(functionDir, 'dist-build', 'src', relative);
+  fs.mkdirSync(path.dirname(destination), { recursive: true });
+  if (path.resolve(file) !== path.join(functionDir, 'index.js')) fs.copyFileSync(file, destination);
+}
 
-const handler = `const { bootstrap } = require('../dist-build/src/main');\n\nlet bootstrapPromise;\nlet serverPromise;\n\nfunction cors(request, response) {\n  const origin = request.headers.origin;\n  if (origin) response.setHeader('Access-Control-Allow-Origin', origin);\n  response.setHeader('Vary', 'Origin');\n  response.setHeader('Access-Control-Allow-Credentials', 'true');\n  response.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS');\n  response.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,apikey');\n  response.setHeader('Access-Control-Max-Age', '86400');\n}\n\nmodule.exports = async (request, response) => {\n  cors(request, response);\n  if (request.method === 'OPTIONS') { response.statusCode = 204; response.end(); return; }\n  try {\n    bootstrapPromise ??= bootstrap();\n    const app = await bootstrapPromise;\n    serverPromise ??= app.getHttpAdapter().getInstance().listen(0, '127.0.0.1');\n    const server = await serverPromise;\n    const address = server.address();\n    const target = new URL(request.url, 'http://127.0.0.1');\n    target.port = String(address.port);\n    const headers = { ...request.headers };\n    delete headers.host;\n    const upstream = await fetch(target, { method: request.method, headers, body: ['GET', 'HEAD'].includes(request.method) ? undefined : request, duplex: 'half' });\n    response.statusCode = upstream.status;\n    upstream.headers.forEach((value, key) => { if (key.toLowerCase() !== 'transfer-encoding') response.setHeader(key, value); });\n    response.end(Buffer.from(await upstream.arrayBuffer()));\n  } catch (error) {\n    console.error('Nest Vercel handler failed', error);\n    if (!response.headersSent) response.statusCode = 500;\n    response.end(JSON.stringify({ statusCode: 500, message: 'Internal server error' }));\n  }\n};\n`;
+const handler = `const { bootstrap } = require('../dist-build/src/main');
+
+let appPromise;
+let callbackPromise;
+
+function setCors(request, response) {
+  const origin = request.headers.origin;
+  if (origin) response.setHeader('Access-Control-Allow-Origin', origin);
+  response.setHeader('Vary', 'Origin');
+  response.setHeader('Access-Control-Allow-Credentials', 'true');
+  response.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS');
+  response.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,apikey');
+  response.setHeader('Access-Control-Max-Age', '86400');
+}
+
+module.exports = async (request, response) => {
+  setCors(request, response);
+  if (request.method === 'OPTIONS') {
+    response.statusCode = 204;
+    response.end();
+    return;
+  }
+
+  try {
+    appPromise ??= bootstrap();
+    const app = await appPromise;
+    callbackPromise ??= new Promise((resolve) => app.getHttpAdapter().getInstance().listen(0, '127.0.0.1', () => resolve(app.getHttpAdapter().getInstance())));
+    const callback = await callbackPromise;
+    await new Promise((resolve, reject) => {
+      callback(request, response, (error) => error ? reject(error) : resolve());
+    });
+  } catch (error) {
+    console.error('Nest Vercel handler failed', error);
+    if (!response.headersSent) {
+      response.statusCode = 500;
+      response.setHeader('Content-Type', 'application/json');
+      response.end(JSON.stringify({ statusCode: 500, message: 'Internal server error' }));
+    }
+  }
+};
+`;
 fs.writeFileSync(path.join(functionDir, 'handler.js'), handler);
-
-const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-const dependencyNames = [
-  '@nestjs/common',
-  '@nestjs/config',
-  '@nestjs/core',
-  '@nestjs/platform-express',
-  '@nestjs/throttler',
-  '@prisma/adapter-pg',
-  '@prisma/client',
-  'jose',
-  'pg',
-  'reflect-metadata',
-  'rxjs',
-  'zod',
-];
-const runtimeDependencies = Object.fromEntries(
-  dependencyNames.map((name) => [name, packageJson.dependencies[name]]),
-);
-
-fs.writeFileSync(
-  path.join(functionDir, 'package.json'),
-  JSON.stringify({ private: true, type: 'commonjs', dependencies: runtimeDependencies }, null, 2),
-);

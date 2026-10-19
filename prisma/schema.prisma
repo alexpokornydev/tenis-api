@@ -1,0 +1,188 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  TRAINER
+  CLIENT
+}
+
+enum MembershipStatus {
+  ACTIVE
+  EXPIRED
+  SUSPENDED
+  NONE
+}
+
+enum ReservationStatus {
+  RESERVED
+  CANCELLED
+  COMPLETED
+}
+
+enum PaymentMethod {
+  FREE_TRAINING
+  CASH
+  CARD
+  BANK_TRANSFER
+}
+
+enum CancellationRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Profile {
+  id                    String                    @id @db.Uuid
+  email                 String                    @unique
+  fullName              String                    @map("full_name")
+  phone                 String?
+  role                  UserRole                  @default(CLIENT)
+  createdAt             DateTime                  @default(now()) @map("created_at")
+  updatedAt             DateTime                  @updatedAt @map("updated_at")
+  membership            Membership?
+  credit                TrainingCredit?
+  reservationsAsClient  ReservationParticipant[]
+  reservationsAsTrainer Reservation[]              @relation("TrainerReservations")
+  reservationsCreated   Reservation[]              @relation("ReservationCreator")
+  cancellationRequests  CancellationRequest[]
+  trainingCreditLedger  TrainingCreditLedger[]     @relation("CreditLedgerProfile")
+  announcementsCreated Announcement[]              @relation("AnnouncementAuthor")
+
+  @@map("profiles")
+}
+
+model Membership {
+  id         String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  profileId  String           @unique @map("profile_id") @db.Uuid
+  type       String           @default("annual")
+  status     MembershipStatus @default(ACTIVE)
+  validFrom  DateTime         @map("valid_from") @db.Date
+  validUntil DateTime?        @map("valid_until") @db.Date
+  annualFee  Int              @default(3000) @map("annual_fee")
+  createdAt  DateTime         @default(now()) @map("created_at")
+  updatedAt  DateTime         @updatedAt @map("updated_at")
+  profile    Profile          @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@map("memberships")
+}
+
+model TrainingCredit {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  profileId       String   @unique @map("profile_id") @db.Uuid
+  balanceMinutes  Int      @default(0) @map("balance_minutes")
+  reservedMinutes Int      @default(0) @map("reserved_minutes")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  profile         Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@map("training_credits")
+}
+
+model TrainingCreditLedger {
+  id            String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  profileId     String                  @map("profile_id") @db.Uuid
+  participantId String                  @map("participant_id") @db.Uuid
+  minutes       Int
+  reason        String
+  createdAt     DateTime                @default(now()) @map("created_at") @db.Timestamptz(3)
+  profile       Profile                 @relation("CreditLedgerProfile", fields: [profileId], references: [id], onDelete: Cascade)
+  participant   ReservationParticipant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+
+  @@unique([participantId, reason])
+  @@index([profileId, createdAt])
+  @@map("training_credit_ledger")
+}
+
+model Court {
+  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String        @unique
+  active       Boolean       @default(true)
+  createdAt    DateTime      @default(now()) @map("created_at")
+  reservations Reservation[]
+
+  @@map("courts")
+}
+
+model Reservation {
+  id                   String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  courtId              String                   @map("court_id") @db.Uuid
+  trainerId            String?                  @map("trainer_id") @db.Uuid
+  startsAt             DateTime                 @map("starts_at") @db.Timestamptz(3)
+  endsAt               DateTime                 @map("ends_at") @db.Timestamptz(3)
+  status               ReservationStatus        @default(RESERVED)
+  paymentMethod        PaymentMethod            @default(CASH) @map("payment_method")
+  priceCents           Int                      @default(0) @map("price_cents")
+  capacity             Int                      @default(1)
+  notes                String?
+  cancelledAt          DateTime?                @map("cancelled_at") @db.Timestamptz(3)
+  cancelledBy          String?                  @map("cancelled_by") @db.Uuid
+  createdBy            String                   @map("created_by") @db.Uuid
+  createdAt            DateTime                 @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt            DateTime                 @updatedAt @map("updated_at") @db.Timestamptz(3)
+  court                Court                    @relation(fields: [courtId], references: [id], onDelete: Restrict)
+  trainer              Profile?                 @relation("TrainerReservations", fields: [trainerId], references: [id], onDelete: SetNull)
+  creator              Profile                  @relation("ReservationCreator", fields: [createdBy], references: [id], onDelete: Restrict)
+  participants         ReservationParticipant[]
+  cancellationRequests CancellationRequest[]
+
+  @@index([startsAt, endsAt])
+  @@index([trainerId, startsAt])
+  @@index([courtId, startsAt])
+  @@map("reservations")
+}
+
+model ReservationParticipant {
+  id            String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reservationId String                  @map("reservation_id") @db.Uuid
+  profileId     String                  @map("profile_id") @db.Uuid
+  creditUsed    Boolean                 @default(false) @map("credit_used")
+  creditMinutes Int                     @default(0) @map("credit_minutes")
+  priceCents    Int                     @default(0) @map("price_cents")
+  createdAt     DateTime                @default(now()) @map("created_at") @db.Timestamptz(3)
+  reservation   Reservation             @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  profile       Profile                 @relation(fields: [profileId], references: [id], onDelete: Restrict)
+  creditLedger  TrainingCreditLedger[]
+
+  @@unique([reservationId, profileId])
+  @@map("reservation_participants")
+}
+
+model CancellationRequest {
+  id            String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reservationId String                   @map("reservation_id") @db.Uuid
+  requesterId   String                   @map("requester_id") @db.Uuid
+  reason        String?
+  status        CancellationRequestStatus @default(PENDING)
+  reviewedBy    String?                  @map("reviewed_by") @db.Uuid
+  reviewedAt    DateTime?                @map("reviewed_at") @db.Timestamptz(3)
+  reviewNote    String?                  @map("review_note")
+  createdAt     DateTime                 @default(now()) @map("created_at") @db.Timestamptz(3)
+  reservation   Reservation              @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  requester     Profile                  @relation(fields: [requesterId], references: [id], onDelete: Restrict)
+
+  @@index([status, createdAt])
+  @@map("cancellation_requests")
+}
+
+model Announcement {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String
+  body        String
+  audience    String[] @default(["CLIENT", "TRAINER"])
+  publishedAt DateTime? @map("published_at") @db.Timestamptz(3)
+  authorId    String   @map("author_id") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  author      Profile  @relation("AnnouncementAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+
+  @@index([publishedAt])
+  @@map("announcements")
+}

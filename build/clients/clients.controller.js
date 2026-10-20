@@ -23,6 +23,12 @@ let ClientsController = class ClientsController {
     constructor(prisma) {
         this.prisma = prisma;
     }
+    async get(id) {
+        const client = await this.prisma.profile.findFirst({ where: { id, role: 'CLIENT' }, select: { id: true, email: true, fullName: true, phone: true, createdAt: true, membership: true, credit: { select: { balanceMinutes: true, reservedMinutes: true } }, reservationsAsClient: { take: 10, orderBy: { reservation: { startsAt: 'desc' } }, include: { reservation: { include: { court: true, trainer: { select: { id: true, fullName: true } } } } } } } });
+        if (!client)
+            throw new common_1.NotFoundException('Client not found.');
+        return client;
+    }
     list(search) {
         const term = search?.trim();
         return this.prisma.profile.findMany({
@@ -34,6 +40,14 @@ let ClientsController = class ClientsController {
     }
 };
 exports.ClientsController = ClientsController;
+__decorate([
+    (0, common_1.Get)(':id'),
+    (0, roles_1.Roles)('OWNER', 'ADMIN'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ClientsController.prototype, "get", null);
 __decorate([
     (0, common_1.Get)(),
     (0, roles_1.Roles)('OWNER', 'ADMIN'),

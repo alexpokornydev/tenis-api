@@ -18,12 +18,13 @@ const prisma_module_1 = require("./prisma/prisma.module");
 const health_controller_1 = require("./health.controller");
 const me_controller_1 = require("./me.controller");
 const reservations_module_1 = require("./reservations/reservations.module");
+const announcements_module_1 = require("./announcements/announcements.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [config_1.ConfigModule.forRoot({ isGlobal: true }), throttler_1.ThrottlerModule.forRoot([{ ttl: 60_000, limit: 120 }]), prisma_module_1.PrismaModule, auth_module_1.AuthModule, clients_module_1.ClientsModule, reservations_module_1.ReservationsModule],
+        imports: [config_1.ConfigModule.forRoot({ isGlobal: true }), throttler_1.ThrottlerModule.forRoot([{ ttl: 60_000, limit: 120 }]), prisma_module_1.PrismaModule, auth_module_1.AuthModule, clients_module_1.ClientsModule, reservations_module_1.ReservationsModule, announcements_module_1.AnnouncementsModule],
         controllers: [health_controller_1.HealthController, me_controller_1.MeController],
         providers: [{ provide: core_1.APP_GUARD, useClass: auth_guard_1.AuthGuard }, { provide: core_1.APP_GUARD, useClass: throttler_1.ThrottlerGuard }],
     })

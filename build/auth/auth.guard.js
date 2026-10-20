@@ -30,12 +30,20 @@ let AuthGuard = class AuthGuard {
         const header = request.headers.authorization;
         if (!header?.startsWith('Bearer '))
             throw new common_1.UnauthorizedException('Supabase access token required.');
+        let verified;
         try {
-            const verified = await this.verifier.verify(header.slice(7).trim());
-            const id = verified.payload.sub, email = verified.payload.email;
-            if (typeof id !== 'string' || typeof email !== 'string')
-                throw new Error('Missing identity');
-            const metadata = verified.payload.user_metadata;
+            verified = await this.verifier.verify(header.slice(7).trim());
+        }
+        catch {
+            throw new common_1.UnauthorizedException('Supabase access token is invalid or expired. Sign in again and retry.');
+        }
+        const id = verified.payload.sub;
+        const email = verified.payload.email;
+        if (typeof id !== 'string' || typeof email !== 'string') {
+            throw new common_1.UnauthorizedException('Supabase token does not include a user id and email.');
+        }
+        const metadata = verified.payload.user_metadata;
+        try {
             const profile = await this.prisma.profile.upsert({
                 where: { id },
                 update: { email },
@@ -46,7 +54,7 @@ let AuthGuard = class AuthGuard {
             return true;
         }
         catch {
-            throw new common_1.UnauthorizedException('Supabase token invalid or user profile could not be provisioned.');
+            throw new common_1.InternalServerErrorException('Access token is valid, but the API could not create or load the profile. Check the API database connection and migrations.');
         }
     }
 };

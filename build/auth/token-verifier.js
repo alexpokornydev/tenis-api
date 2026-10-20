@@ -15,6 +15,7 @@ const config_1 = require("@nestjs/config");
 let TokenVerifier = class TokenVerifier {
     issuer;
     jwksUrl;
+    jwks;
     constructor(config) {
         const url = config.getOrThrow('SUPABASE_URL').replace(/\/$/, '');
         this.issuer = `${url}/auth/v1`;
@@ -22,8 +23,8 @@ let TokenVerifier = class TokenVerifier {
     }
     async verify(token) {
         const { createRemoteJWKSet, jwtVerify } = await import('jose');
-        const jwks = createRemoteJWKSet(this.jwksUrl);
-        return jwtVerify(token, jwks, { issuer: this.issuer, audience: 'authenticated' });
+        this.jwks ??= createRemoteJWKSet(this.jwksUrl);
+        return jwtVerify(token, this.jwks, { issuer: this.issuer, audience: 'authenticated' });
     }
 };
 exports.TokenVerifier = TokenVerifier;

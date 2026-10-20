@@ -45,9 +45,10 @@ export class AuthGuard implements CanActivate {
       request.user = { id: profile.id, email: profile.email || email, role: profile.role };
       return true;
     } catch (error) {
+      const prismaError = error as { code?: unknown; meta?: { code?: unknown } };
       throw new InternalServerErrorException({
         message: 'Access token is valid, but the API could not create or load the profile. Check database connectivity and required migrations.',
-        code: error instanceof Error ? error.name : 'UNKNOWN_DATABASE_ERROR',
+        code: typeof prismaError?.code === 'string' ? prismaError.code : typeof prismaError?.meta?.code === 'string' ? prismaError.meta.code : error instanceof Error ? error.name : 'UNKNOWN_DATABASE_ERROR',
       });
     }
   }

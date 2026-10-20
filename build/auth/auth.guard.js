@@ -62,9 +62,10 @@ let AuthGuard = class AuthGuard {
             return true;
         }
         catch (error) {
+            const prismaError = error;
             throw new common_1.InternalServerErrorException({
                 message: 'Access token is valid, but the API could not create or load the profile. Check database connectivity and required migrations.',
-                code: error instanceof Error ? error.name : 'UNKNOWN_DATABASE_ERROR',
+                code: typeof prismaError?.code === 'string' ? prismaError.code : typeof prismaError?.meta?.code === 'string' ? prismaError.meta.code : error instanceof Error ? error.name : 'UNKNOWN_DATABASE_ERROR',
             });
         }
     }

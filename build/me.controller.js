@@ -28,15 +28,6 @@ let MeController = class MeController {
             return null;
         return { id: profile.id, email: profile.email, fullName: profile.fullName, phone: profile.phone, role: profile.role, membership: profile.membership, credit: profile.credit };
     }
-    async provision(user) {
-        const profile = await this.prisma.profile.upsert({
-            where: { id: user.id },
-            update: { email: user.email },
-            create: { id: user.id, email: user.email, fullName: user.email.split('@')[0], role: 'CLIENT', credit: { create: {} } },
-            include: { membership: true, credit: { select: { balanceMinutes: true, reservedMinutes: true } } },
-        });
-        return { id: profile.id, email: profile.email, fullName: profile.fullName, phone: profile.phone, role: profile.role, membership: profile.membership, credit: profile.credit };
-    }
 };
 exports.MeController = MeController;
 __decorate([
@@ -46,13 +37,6 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], MeController.prototype, "getMe", null);
-__decorate([
-    (0, common_1.Post)('provision'),
-    __param(0, (0, current_user_decorator_1.CurrentUser)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], MeController.prototype, "provision", null);
 exports.MeController = MeController = __decorate([
     (0, common_1.Controller)('me'),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),

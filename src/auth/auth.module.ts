@@ -1,9 +1,7 @@
-import { Module } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
-
-import { RolesGuard } from '../common/roles.guard';
+import { Global, Module } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
 import { TokenVerifier } from './token-verifier';
 
-@Module({ providers: [TokenVerifier, AuthGuard, { provide: APP_GUARD, useClass: AuthGuard }, RolesGuard], exports: [AuthGuard, RolesGuard] })
+@Global()
+@Module({ providers: [TokenVerifier, AuthGuard], exports: [AuthGuard, TokenVerifier] })
 export class AuthModule {}

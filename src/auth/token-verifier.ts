@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import type { ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 
 @Injectable()
 export class TokenVerifier {
-  private readonly jwks: ReturnType<typeof createRemoteJWKSet>;
   private readonly issuer: string;
+  private readonly jwks: ReturnType<typeof createRemoteJWKSet>;
 
   constructor(config: ConfigService) {
-    const supabaseUrl = config.getOrThrow<string>('SUPABASE_URL').replace(/\/$/, '');
-    this.issuer = `${supabaseUrl}/auth/v1`;
+    const url = config.getOrThrow<string>('SUPABASE_URL').replace(/\/$/, '');
+    this.issuer = `${url}/auth/v1`;
     this.jwks = createRemoteJWKSet(new URL(`${this.issuer}/.well-known/jwks.json`));
   }
 

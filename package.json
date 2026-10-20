@@ -2,22 +2,19 @@
   "name": "tenisplzen-api",
   "version": "1.0.0",
   "private": true,
-  "description": "NestJS API for the Tenis Plzeň club app",
+  "description": "Persistent NestJS API for Tenis Plzen",
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
-    "build:vercel": "npm run build",
-    "start": "nest start",
+    "build": "prisma generate && nest build",
+    "start": "node build/main.js",
     "start:dev": "nest start --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node build/main.js",
     "lint": "eslint \"{src,test}/**/*.ts\"",
     "test": "jest --runInBand",
     "typecheck": "tsc --noEmit",
-    "test:watch": "jest --watch",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
-    "prisma:migrate:dev": "prisma migrate dev",
-    "prisma:studio": "prisma studio"
+    "prisma:migrate:dev": "prisma migrate dev"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.0",
@@ -27,6 +24,8 @@
     "@nestjs/throttler": "^6.7.1",
     "@prisma/adapter-pg": "^7.0.0",
     "@prisma/client": "^7.0.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1",
     "jose": "^6.1.0",
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
@@ -42,7 +41,6 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^24.9.2",
     "@types/pg": "^8.15.5",
-    "@vercel/node": "^24.0.3",
     "eslint": "^9.39.0",
     "jest": "^30.2.0",
     "prisma": "^7.0.0",
@@ -53,9 +51,5 @@
   },
   "prisma": {
     "schema": "prisma/schema.prisma"
-  },
-  "allowScripts": {
-    "prisma@7.10.1": true,
-    "@prisma/engines@7.10.1": true
   }
 }

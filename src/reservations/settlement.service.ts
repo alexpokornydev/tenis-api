@@ -1,75 +1,33 @@
-import { Injectable, Logger } from '@nestjs/common';
-
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { Prisma } from '../generated/prisma/client';
-
-import type { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
-export class SettlementService {
+export class SettlementService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(SettlementService.name);
-
-  private timer: ReturnType<typeof setInterval> | undefined;
-
+  private timer?: ReturnType<typeof setInterval>;
   constructor(private readonly prisma: PrismaService) {}
+  onModuleInit() { this.timer = setInterval(() => void this.settleEnded(), 60_000); this.timer.unref(); }
+  onModuleDestroy() { if (this.timer) clearInterval(this.timer); }
 
-  onModuleInit() {
-    this.timer = setInterval(() => { void this.settleEndedReservations(); }, 60_000);
-    this.timer.unref();
-  }
-
-  onModuleDestroy() {
-    if (this.timer) clearInterval(this.timer);
-  }
-
-  async settleEndedReservations() {
-    const now = new Date();
-    const ended = await this.prisma.reservation.findMany({ where: { status: 'RESERVED', endsAt: { lte: now } }, select: { id: true }, take: 100 });
-    for (const { id } of ended) {
-      try {
-        await this.settleReservation(id, now);
-      } catch (error) {
-        this.logger.error(`Could not settle ended reservation ${id}`, error instanceof Error ? error.stack : String(error));
-      }
+  async settleEnded() {
+    const ended = await this.prisma.reservation.findMany({ where: { status: 'RESERVED', endsAt: { lte: new Date() } }, select: { id: true }, take: 100 });
+    for (const reservation of ended) {
+      try { await this.settle(reservation.id); }
+      catch (error) { this.logger.error(`Settlement failed for ${reservation.id}`, error instanceof Error ? error.stack : String(error)); }
     }
   }
 
-  async settleReservation(reservationId: string, now = new Date()) {
+  async settle(id: string, now = new Date()) {
     return this.prisma.$transaction(async (tx) => {
-      const reservation = await tx.reservation.findUnique({ where: { id: reservationId }, include: { participants: true } });
+      const reservation = await tx.reservation.findUnique({ where: { id }, include: { participants: true } });
       if (!reservation || reservation.status !== 'RESERVED' || reservation.endsAt > now) return null;
-      const creditParticipants = reservation.participants.filter((participant) => participant.creditUsed && participant.creditMinutes > 0);
-      const credits = await tx.trainingCredit.findMany({ where: { profileId: { in: creditParticipants.map((participant) => participant.profileId) } }, select: { profileId: true, balanceMinutes: true, reservedMinutes: true } });
-      const available = new Map(credits.map((credit) => [credit.profileId, credit]));
-      const insufficient = creditParticipants.find((participant) => {
-        const credit = available.get(participant.profileId);
-        return !credit || credit.balanceMinutes < participant.creditMinutes || credit.reservedMinutes < participant.creditMinutes;
-      });
-      if (insufficient) {
-        this.logger.warn(`Reservation ${reservationId} remains reserved: client ${insufficient.profileId} has insufficient balance or reserved hours.`);
-        return null;
-      }
-
-      for (const participant of creditParticipants) {
-        const debit = await tx.trainingCredit.updateMany({ where: { profileId: participant.profileId, balanceMinutes: { gte: participant.creditMinutes }, reservedMinutes: { gte: participant.creditMinutes } }, data: { balanceMinutes: { decrement: participant.creditMinutes }, reservedMinutes: { decrement: participant.creditMinutes } } });
-        if (!debit.count) throw new Error(`Credit balance changed during settlement for client ${participant.profileId}.`);
+      for (const participant of reservation.participants.filter((p) => p.creditUsed && p.creditMinutes > 0)) {
+        const result = await tx.trainingCredit.updateMany({ where: { profileId: participant.profileId, balanceMinutes: { gte: participant.creditMinutes }, reservedMinutes: { gte: participant.creditMinutes } }, data: { balanceMinutes: { decrement: participant.creditMinutes }, reservedMinutes: { decrement: participant.creditMinutes } } });
+        if (!result.count) throw new Error(`Insufficient held balance for ${participant.profileId}`);
         await tx.trainingCreditLedger.create({ data: { profileId: participant.profileId, participantId: participant.id, minutes: -participant.creditMinutes, reason: 'RESERVATION_COMPLETED' } });
       }
-      const result = await tx.reservation.updateMany({ where: { id: reservationId, status: 'RESERVED', endsAt: { lte: now } }, data: { status: 'COMPLETED' } });
-      if (!result.count) throw new Error(`Reservation ${reservationId} changed state during settlement.`);
-      const settledReservationInclude = {
-        participants: {
-          include: {
-            profile: {
-              select: {
-                id: true,
-                fullName: true,
-                credit: { select: { balanceMinutes: true, reservedMinutes: true } },
-              },
-            },
-          },
-        },
-      } satisfies Prisma.ReservationInclude;
-      return tx.reservation.findUnique({ where: { id: reservationId }, include: settledReservationInclude });
+      return tx.reservation.update({ where: { id }, data: { status: 'COMPLETED' } });
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
   }
 }

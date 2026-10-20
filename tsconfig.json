@@ -7,11 +7,9 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "target": "ES2022",
-    "sourceMap": true,
-    "outDir": "./dist-build",
-    "incremental": false,
+    "outDir": "./build",
+    "rootDir": "./src",
     "baseUrl": "./",
-
     "skipLibCheck": true,
     "strictNullChecks": true,
     "noImplicitAny": true,
@@ -22,6 +20,6 @@
     "strict": true,
     "types": ["node", "jest"]
   },
-  "include": ["src/**/*.ts", "test/**/*.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "build", "test"]
 }

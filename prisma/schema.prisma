@@ -56,7 +56,6 @@ model Profile {
   cancellationRequests  CancellationRequest[]
   trainingCreditLedger  TrainingCreditLedger[]     @relation("CreditLedgerProfile")
   announcementsCreated Announcement[]              @relation("AnnouncementAuthor")
-
   @@map("profiles")
 }
 
@@ -71,7 +70,6 @@ model Membership {
   createdAt  DateTime         @default(now()) @map("created_at")
   updatedAt  DateTime         @updatedAt @map("updated_at")
   profile    Profile          @relation(fields: [profileId], references: [id], onDelete: Cascade)
-
   @@map("memberships")
 }
 
@@ -82,7 +80,6 @@ model TrainingCredit {
   reservedMinutes Int      @default(0) @map("reserved_minutes")
   updatedAt       DateTime @updatedAt @map("updated_at")
   profile         Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
-
   @@map("training_credits")
 }
 
@@ -95,7 +92,6 @@ model TrainingCreditLedger {
   createdAt     DateTime                @default(now()) @map("created_at") @db.Timestamptz(3)
   profile       Profile                 @relation("CreditLedgerProfile", fields: [profileId], references: [id], onDelete: Cascade)
   participant   ReservationParticipant @relation(fields: [participantId], references: [id], onDelete: Cascade)
-
   @@unique([participantId, reason])
   @@index([profileId, createdAt])
   @@map("training_credit_ledger")
@@ -107,7 +103,6 @@ model Court {
   active       Boolean       @default(true)
   createdAt    DateTime      @default(now()) @map("created_at")
   reservations Reservation[]
-
   @@map("courts")
 }
 
@@ -132,7 +127,6 @@ model Reservation {
   creator              Profile                  @relation("ReservationCreator", fields: [createdBy], references: [id], onDelete: Restrict)
   participants         ReservationParticipant[]
   cancellationRequests CancellationRequest[]
-
   @@index([startsAt, endsAt])
   @@index([trainerId, startsAt])
   @@index([courtId, startsAt])
@@ -150,7 +144,6 @@ model ReservationParticipant {
   reservation   Reservation             @relation(fields: [reservationId], references: [id], onDelete: Cascade)
   profile       Profile                 @relation(fields: [profileId], references: [id], onDelete: Restrict)
   creditLedger  TrainingCreditLedger[]
-
   @@unique([reservationId, profileId])
   @@map("reservation_participants")
 }
@@ -167,7 +160,6 @@ model CancellationRequest {
   createdAt     DateTime                 @default(now()) @map("created_at") @db.Timestamptz(3)
   reservation   Reservation              @relation(fields: [reservationId], references: [id], onDelete: Cascade)
   requester     Profile                  @relation(fields: [requesterId], references: [id], onDelete: Restrict)
-
   @@index([status, createdAt])
   @@map("cancellation_requests")
 }
@@ -182,7 +174,6 @@ model Announcement {
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
   author      Profile  @relation("AnnouncementAuthor", fields: [authorId], references: [id], onDelete: Restrict)
-
   @@index([publishedAt])
   @@map("announcements")
 }

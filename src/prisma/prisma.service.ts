@@ -1,5 +1,4 @@
-import type { OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../generated/prisma/client';
 
@@ -7,16 +6,9 @@ import { PrismaClient } from '../generated/prisma/client';
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   constructor() {
     const connectionString = process.env.DATABASE_URL;
-    if (!connectionString) throw new Error('DATABASE_URL must be set before the API starts.');
-    const adapter = new PrismaPg({ connectionString });
-    super({ adapter });
+    if (!connectionString) throw new Error('DATABASE_URL must be configured.');
+    super({ adapter: new PrismaPg({ connectionString, max: 10 }) });
   }
-
-  async onModuleInit() {
-    await this.$connect();
-  }
-
-  async onModuleDestroy() {
-    await this.$disconnect();
-  }
+  async onModuleInit() { await this.$connect(); }
+  async onModuleDestroy() { await this.$disconnect(); }
 }

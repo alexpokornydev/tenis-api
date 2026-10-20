@@ -24,5 +24,5 @@ export declare class MeController {
             balanceMinutes: number;
             reservedMinutes: number;
         } | null;
-    } | null>;
+    }>;
 }

@@ -23,10 +23,18 @@ let MeController = class MeController {
         this.prisma = prisma;
     }
     async getMe(user) {
-        const profile = await this.prisma.profile.findUnique({ where: { id: user.id }, include: { membership: true, credit: { select: { balanceMinutes: true, reservedMinutes: true } } } });
-        if (!profile)
-            return null;
-        return { id: profile.id, email: profile.email, fullName: profile.fullName, phone: profile.phone, role: profile.role, membership: profile.membership, credit: profile.credit };
+        try {
+            const profile = await this.prisma.profile.findUnique({ where: { id: user.id }, include: { membership: true, credit: { select: { balanceMinutes: true, reservedMinutes: true } } } });
+            if (!profile)
+                throw new Error('Verified profile is missing after authentication guard completed.');
+            return { id: profile.id, email: profile.email, fullName: profile.fullName, phone: profile.phone, role: profile.role, membership: profile.membership, credit: profile.credit };
+        }
+        catch (error) {
+            throw new common_1.InternalServerErrorException({
+                message: 'The API verified the Supabase account but could not load its profile.',
+                code: error instanceof Error ? error.code ?? error.name : 'UNKNOWN_PROFILE_ERROR',
+            });
+        }
     }
 };
 exports.MeController = MeController;

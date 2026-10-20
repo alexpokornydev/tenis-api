@@ -28,16 +28,27 @@ export class AuthGuard implements CanActivate {
 
     const metadata = verified.payload.user_metadata as { full_name?: string } | undefined;
     try {
-      const profile = await this.prisma.profile.upsert({
-        where: { id },
-        update: { email },
-        create: { id, email, fullName: metadata?.full_name?.trim() || email.split('@')[0], role: 'CLIENT', credit: { create: {} } },
-        select: { id: true, email: true, role: true },
+      const profile = await this.prisma.$transaction(async (tx) => {
+        const current = await tx.profile.upsert({
+          where: { id },
+          update: { email },
+          create: { id, email, fullName: metadata?.full_name?.trim() || email.split('@')[0], role: 'CLIENT' },
+          select: { id: true, email: true, role: true },
+        });
+        await tx.trainingCredit.upsert({
+          where: { profileId: current.id },
+          update: {},
+          create: { profileId: current.id },
+        });
+        return current;
       });
       request.user = { id: profile.id, email: profile.email || email, role: profile.role };
       return true;
-    } catch {
-      throw new InternalServerErrorException('Access token is valid, but the API could not create or load the profile. Check the API database connection and migrations.');
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: 'Access token is valid, but the API could not create or load the profile. Check database connectivity and required migrations.',
+        code: error instanceof Error ? error.name : 'UNKNOWN_DATABASE_ERROR',
+      });
     }
   }
 }

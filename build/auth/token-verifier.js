@@ -12,17 +12,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TokenVerifier = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
-const jose_1 = require("jose");
 let TokenVerifier = class TokenVerifier {
     issuer;
-    jwks;
+    jwksUrl;
     constructor(config) {
         const url = config.getOrThrow('SUPABASE_URL').replace(/\/$/, '');
         this.issuer = `${url}/auth/v1`;
-        this.jwks = (0, jose_1.createRemoteJWKSet)(new URL(`${this.issuer}/.well-known/jwks.json`));
+        this.jwksUrl = new URL(`${this.issuer}/.well-known/jwks.json`);
     }
-    verify(token) {
-        return (0, jose_1.jwtVerify)(token, this.jwks, { issuer: this.issuer, audience: 'authenticated' });
+    async verify(token) {
+        const { createRemoteJWKSet, jwtVerify } = await import('jose');
+        const jwks = createRemoteJWKSet(this.jwksUrl);
+        return jwtVerify(token, jwks, { issuer: this.issuer, audience: 'authenticated' });
     }
 };
 exports.TokenVerifier = TokenVerifier;

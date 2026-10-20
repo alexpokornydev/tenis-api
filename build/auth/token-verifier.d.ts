@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 export declare class TokenVerifier {
     private readonly issuer;
-    private readonly jwks;
+    private readonly jwksUrl;
     constructor(config: ConfigService);
-    verify(token: string): Promise<import("jose").JWTVerifyResult<import("jose").JWTPayload> & import("jose").ResolvedKey<CryptoKey>>;
+    verify(token: string): Promise<import("jose", { with: { "resolution-mode": "import" } }).JWTVerifyResult<import("jose", { with: { "resolution-mode": "import" } }).JWTPayload> & import("jose", { with: { "resolution-mode": "import" } }).ResolvedKey<CryptoKey>>;
 }

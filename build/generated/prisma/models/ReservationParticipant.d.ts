@@ -1,5 +1,5 @@
 import type * as runtime from "@prisma/client/runtime/client";
-import type * as Prisma from "../internal/prismaNamespace";
+import type * as Prisma from "../internal/prismaNamespace.js";
 export type ReservationParticipantModel = runtime.Types.Result.DefaultSelection<Prisma.$ReservationParticipantPayload>;
 export type AggregateReservationParticipant = {
     _count: ReservationParticipantCountAggregateOutputType | null;

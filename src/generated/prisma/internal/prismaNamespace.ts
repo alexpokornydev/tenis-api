@@ -397,11 +397,11 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
+  ClubSettings: 'ClubSettings',
   Profile: 'Profile',
   Membership: 'Membership',
   TrainingCredit: 'TrainingCredit',
   TrainingCreditLedger: 'TrainingCreditLedger',
-  Court: 'Court',
   Reservation: 'Reservation',
   ReservationParticipant: 'ReservationParticipant',
   CancellationRequest: 'CancellationRequest',
@@ -421,10 +421,84 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "profile" | "membership" | "trainingCredit" | "trainingCreditLedger" | "court" | "reservation" | "reservationParticipant" | "cancellationRequest" | "announcement"
+    modelProps: "clubSettings" | "profile" | "membership" | "trainingCredit" | "trainingCreditLedger" | "reservation" | "reservationParticipant" | "cancellationRequest" | "announcement"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
+    ClubSettings: {
+      payload: Prisma.$ClubSettingsPayload<ExtArgs>
+      fields: Prisma.ClubSettingsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ClubSettingsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClubSettingsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ClubSettingsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClubSettingsPayload>
+        }
+        findFirst: {
+          args: Prisma.ClubSettingsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClubSettingsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ClubSettingsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClubSettingsPayload>
+        }
+        findMany: {
+          args: Prisma.ClubSettingsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClubSettingsPayload>[]
+        }
+        create: {
+          args: Prisma.ClubSettingsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClubSettingsPayload>
+        }
+        createMany: {
+          args: Prisma.ClubSettingsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ClubSettingsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClubSettingsPayload>[]
+        }
+        delete: {
+          args: Prisma.ClubSettingsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClubSettingsPayload>
+        }
+        update: {
+          args: Prisma.ClubSettingsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClubSettingsPayload>
+        }
+        deleteMany: {
+          args: Prisma.ClubSettingsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ClubSettingsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ClubSettingsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClubSettingsPayload>[]
+        }
+        upsert: {
+          args: Prisma.ClubSettingsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClubSettingsPayload>
+        }
+        aggregate: {
+          args: Prisma.ClubSettingsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateClubSettings>
+        }
+        groupBy: {
+          args: Prisma.ClubSettingsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ClubSettingsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ClubSettingsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ClubSettingsCountAggregateOutputType> | number
+        }
+      }
+    }
     Profile: {
       payload: Prisma.$ProfilePayload<ExtArgs>
       fields: Prisma.ProfileFieldRefs
@@ -718,80 +792,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.TrainingCreditLedgerCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.TrainingCreditLedgerCountAggregateOutputType> | number
-        }
-      }
-    }
-    Court: {
-      payload: Prisma.$CourtPayload<ExtArgs>
-      fields: Prisma.CourtFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.CourtFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.CourtFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload>
-        }
-        findFirst: {
-          args: Prisma.CourtFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.CourtFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload>
-        }
-        findMany: {
-          args: Prisma.CourtFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload>[]
-        }
-        create: {
-          args: Prisma.CourtCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload>
-        }
-        createMany: {
-          args: Prisma.CourtCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.CourtCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload>[]
-        }
-        delete: {
-          args: Prisma.CourtDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload>
-        }
-        update: {
-          args: Prisma.CourtUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload>
-        }
-        deleteMany: {
-          args: Prisma.CourtDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.CourtUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.CourtUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload>[]
-        }
-        upsert: {
-          args: Prisma.CourtUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload>
-        }
-        aggregate: {
-          args: Prisma.CourtAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateCourt>
-        }
-        groupBy: {
-          args: Prisma.CourtGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.CourtGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.CourtCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.CourtCountAggregateOutputType> | number
         }
       }
     }
@@ -1130,11 +1130,23 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+export const ClubSettingsScalarFieldEnum = {
+  id: 'id',
+  defaultHourlyRateCents: 'defaultHourlyRateCents',
+  defaultTrainerRateCents: 'defaultTrainerRateCents',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ClubSettingsScalarFieldEnum = (typeof ClubSettingsScalarFieldEnum)[keyof typeof ClubSettingsScalarFieldEnum]
+
+
 export const ProfileScalarFieldEnum = {
   id: 'id',
   email: 'email',
   fullName: 'fullName',
   phone: 'phone',
+  trainerRateCents: 'trainerRateCents',
+  clientHourlyRateCents: 'clientHourlyRateCents',
   role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1181,19 +1193,8 @@ export const TrainingCreditLedgerScalarFieldEnum = {
 export type TrainingCreditLedgerScalarFieldEnum = (typeof TrainingCreditLedgerScalarFieldEnum)[keyof typeof TrainingCreditLedgerScalarFieldEnum]
 
 
-export const CourtScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  active: 'active',
-  createdAt: 'createdAt'
-} as const
-
-export type CourtScalarFieldEnum = (typeof CourtScalarFieldEnum)[keyof typeof CourtScalarFieldEnum]
-
-
 export const ReservationScalarFieldEnum = {
   id: 'id',
-  courtId: 'courtId',
   trainerId: 'trainerId',
   startsAt: 'startsAt',
   endsAt: 'endsAt',
@@ -1285,6 +1286,34 @@ export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
 /**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+/**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'DateTime'
+ */
+export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+/**
+ * Reference to a field of type 'DateTime[]'
+ */
+export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
  * Reference to a field of type 'String'
  */
 export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String'>
@@ -1313,20 +1342,6 @@ export type ListEnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$Pri
 
 
 /**
- * Reference to a field of type 'DateTime'
- */
-export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
-    
-
-
-/**
- * Reference to a field of type 'DateTime[]'
- */
-export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
-    
-
-
-/**
  * Reference to a field of type 'MembershipStatus'
  */
 export type EnumMembershipStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MembershipStatus'>
@@ -1337,27 +1352,6 @@ export type EnumMembershipStatusFieldRefInput<$PrismaModel> = FieldRefInputType<
  * Reference to a field of type 'MembershipStatus[]'
  */
 export type ListEnumMembershipStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MembershipStatus[]'>
-    
-
-
-/**
- * Reference to a field of type 'Int'
- */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-/**
- * Reference to a field of type 'Int[]'
- */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-/**
- * Reference to a field of type 'Boolean'
- */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -1386,6 +1380,13 @@ export type EnumPaymentMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
  * Reference to a field of type 'PaymentMethod[]'
  */
 export type ListEnumPaymentMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentMethod[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -1567,11 +1568,11 @@ export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions 
  */
 export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
+  clubSettings?: Prisma.ClubSettingsOmit
   profile?: Prisma.ProfileOmit
   membership?: Prisma.MembershipOmit
   trainingCredit?: Prisma.TrainingCreditOmit
   trainingCreditLedger?: Prisma.TrainingCreditLedgerOmit
-  court?: Prisma.CourtOmit
   reservation?: Prisma.ReservationOmit
   reservationParticipant?: Prisma.ReservationParticipantOmit
   cancellationRequest?: Prisma.CancellationRequestOmit

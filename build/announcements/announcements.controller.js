@@ -34,13 +34,18 @@ let AnnouncementsController = class AnnouncementsController {
     list(user) {
         return this.prisma.announcement.findMany({
             where: {
-                publishedAt: { lte: new Date() },
                 ...(user.role === 'CLIENT' ? { audience: { has: 'CLIENT' } } : user.role === 'TRAINER' ? { audience: { has: 'TRAINER' } } : {}),
             },
             include: { author: { select: { id: true, fullName: true } } },
             orderBy: { publishedAt: 'desc' },
             take: 100,
         });
+    }
+    async remove(id) {
+        const result = await this.prisma.announcement.deleteMany({ where: { id } });
+        if (result.count === 0)
+            throw new common_1.NotFoundException('Announcement not found.');
+        return { success: true, id };
     }
     create(body, user) {
         const parsed = announcementSchema.safeParse(body);
@@ -67,6 +72,14 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], AnnouncementsController.prototype, "list", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    (0, roles_1.Roles)('OWNER', 'ADMIN'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AnnouncementsController.prototype, "remove", null);
 __decorate([
     (0, common_1.Post)(),
     (0, roles_1.Roles)('OWNER', 'ADMIN'),

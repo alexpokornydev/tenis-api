@@ -25,4 +25,26 @@ export declare class MeController {
             reservedMinutes: number;
         } | null;
     }>;
+    updateMe(user: AuthenticatedUser, body: unknown): Promise<{
+        id: string;
+        email: string;
+        fullName: string;
+        phone: string | null;
+        role: import("./generated/prisma/enums").UserRole;
+        membership: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            profileId: string;
+            type: string;
+            status: import("./generated/prisma/enums").MembershipStatus;
+            validFrom: Date;
+            validUntil: Date | null;
+            annualFee: number;
+        } | null;
+        credit: {
+            balanceMinutes: number;
+            reservedMinutes: number;
+        } | null;
+    }>;
 }

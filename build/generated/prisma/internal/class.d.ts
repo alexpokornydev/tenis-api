@@ -30,6 +30,9 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
     $extends: runtime.Types.Extensions.ExtendsHook<"extends", Prisma.TypeMapCb<OmitOpts>, ExtArgs, runtime.Types.Utils.Call<Prisma.TypeMapCb<OmitOpts>, {
         extArgs: ExtArgs;
     }>>;
+    get clubSettings(): Prisma.ClubSettingsDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
     get profile(): Prisma.ProfileDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
@@ -40,9 +43,6 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
         omit: OmitOpts;
     }>;
     get trainingCreditLedger(): Prisma.TrainingCreditLedgerDelegate<ExtArgs, {
-        omit: OmitOpts;
-    }>;
-    get court(): Prisma.CourtDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
     get reservation(): Prisma.ReservationDelegate<ExtArgs, {

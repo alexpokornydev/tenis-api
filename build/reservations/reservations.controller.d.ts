@@ -6,36 +6,92 @@ export declare class ReservationsController {
     private readonly prisma;
     private readonly settlement;
     constructor(prisma: PrismaService, settlement: SettlementService);
-    options(): Promise<{
+    options(user: AuthenticatedUser): Promise<{
         clients: {
-            id: string;
-            email: string;
-            fullName: string;
+            effectiveClientHourlyRateCents: number;
             membership: {
                 status: import("../generated/prisma/enums").MembershipStatus;
                 validUntil: Date | null;
             } | null;
+            id: string;
+            email: string;
+            fullName: string;
+            clientHourlyRateCents: number | null;
             credit: {
                 balanceMinutes: number;
                 reservedMinutes: number;
             } | null;
         }[];
         trainers: {
+            effectiveTrainerRateCents: number;
             id: string;
             fullName: string;
+            trainerRateCents: number | null;
         }[];
-        courts: {
-            id: string;
-            name: string;
-        }[];
+        settings: {
+            id: number;
+            updatedAt: Date;
+            defaultHourlyRateCents: number;
+            defaultTrainerRateCents: number;
+        } | {
+            id: number;
+            defaultHourlyRateCents: number;
+            defaultTrainerRateCents: number;
+        };
     }>;
-    list(user: AuthenticatedUser, from?: string, to?: string): Prisma.PrismaPromise<({
-        court: {
+    listCancellationRequests(): Prisma.PrismaPromise<({
+        reservation: {
+            trainer: {
+                id: string;
+                fullName: string;
+            } | null;
+            participants: ({
+                profile: {
+                    id: string;
+                    fullName: string;
+                };
+            } & {
+                id: string;
+                createdAt: Date;
+                profileId: string;
+                reservationId: string;
+                creditUsed: boolean;
+                creditMinutes: number;
+                priceCents: number;
+            })[];
+        } & {
             id: string;
             createdAt: Date;
-            name: string;
-            active: boolean;
+            updatedAt: Date;
+            status: import("../generated/prisma/enums").ReservationStatus;
+            startsAt: Date;
+            priceCents: number;
+            trainerId: string | null;
+            endsAt: Date;
+            paymentMethod: import("../generated/prisma/enums").PaymentMethod;
+            capacity: number;
+            notes: string | null;
+            cancelledAt: Date | null;
+            cancelledBy: string | null;
+            createdBy: string;
         };
+        requester: {
+            id: string;
+            email: string;
+            fullName: string;
+        };
+    } & {
+        id: string;
+        createdAt: Date;
+        status: import("../generated/prisma/enums").CancellationRequestStatus;
+        reservationId: string;
+        reason: string | null;
+        requesterId: string;
+        reviewedBy: string | null;
+        reviewedAt: Date | null;
+        reviewNote: string | null;
+    })[]>;
+    list(user: AuthenticatedUser, from?: string, to?: string): Prisma.PrismaPromise<({
         trainer: {
             id: string;
             fullName: string;
@@ -49,22 +105,21 @@ export declare class ReservationsController {
             id: string;
             createdAt: Date;
             profileId: string;
-            priceCents: number;
             reservationId: string;
             creditUsed: boolean;
             creditMinutes: number;
+            priceCents: number;
         })[];
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
         status: import("../generated/prisma/enums").ReservationStatus;
-        courtId: string;
-        trainerId: string | null;
         startsAt: Date;
+        priceCents: number;
+        trainerId: string | null;
         endsAt: Date;
         paymentMethod: import("../generated/prisma/enums").PaymentMethod;
-        priceCents: number;
         capacity: number;
         notes: string | null;
         cancelledAt: Date | null;
@@ -72,12 +127,6 @@ export declare class ReservationsController {
         createdBy: string;
     })[]>;
     get(id: string, user: AuthenticatedUser): Promise<{
-        court: {
-            id: string;
-            createdAt: Date;
-            name: string;
-            active: boolean;
-        };
         trainer: {
             id: string;
             fullName: string;
@@ -91,22 +140,21 @@ export declare class ReservationsController {
             id: string;
             createdAt: Date;
             profileId: string;
-            priceCents: number;
             reservationId: string;
             creditUsed: boolean;
             creditMinutes: number;
+            priceCents: number;
         })[];
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
         status: import("../generated/prisma/enums").ReservationStatus;
-        courtId: string;
-        trainerId: string | null;
         startsAt: Date;
+        priceCents: number;
+        trainerId: string | null;
         endsAt: Date;
         paymentMethod: import("../generated/prisma/enums").PaymentMethod;
-        priceCents: number;
         capacity: number;
         notes: string | null;
         cancelledAt: Date | null;
@@ -114,42 +162,34 @@ export declare class ReservationsController {
         createdBy: string;
     }>;
     create(body: unknown, user: AuthenticatedUser): Promise<{
-        court: {
+        trainer: {
             id: string;
-            createdAt: Date;
-            name: string;
-            active: boolean;
-        };
+            fullName: string;
+        } | null;
         participants: ({
             profile: {
                 id: string;
-                email: string;
                 fullName: string;
-                phone: string | null;
-                role: import("../generated/prisma/enums").UserRole;
-                createdAt: Date;
-                updatedAt: Date;
             };
         } & {
             id: string;
             createdAt: Date;
             profileId: string;
-            priceCents: number;
             reservationId: string;
             creditUsed: boolean;
             creditMinutes: number;
+            priceCents: number;
         })[];
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
         status: import("../generated/prisma/enums").ReservationStatus;
-        courtId: string;
-        trainerId: string | null;
         startsAt: Date;
+        priceCents: number;
+        trainerId: string | null;
         endsAt: Date;
         paymentMethod: import("../generated/prisma/enums").PaymentMethod;
-        priceCents: number;
         capacity: number;
         notes: string | null;
         cancelledAt: Date | null;
@@ -160,20 +200,18 @@ export declare class ReservationsController {
         id: string;
         createdAt: Date;
         status: import("../generated/prisma/enums").CancellationRequestStatus;
-        reason: string | null;
         reservationId: string;
+        reason: string | null;
         requesterId: string;
         reviewedBy: string | null;
         reviewedAt: Date | null;
         reviewNote: string | null;
     }>;
     cancel(id: string, user: AuthenticatedUser): Promise<{
-        court: {
+        trainer: {
             id: string;
-            createdAt: Date;
-            name: string;
-            active: boolean;
-        };
+            fullName: string;
+        } | null;
         participants: ({
             profile: {
                 id: string;
@@ -183,22 +221,21 @@ export declare class ReservationsController {
             id: string;
             createdAt: Date;
             profileId: string;
-            priceCents: number;
             reservationId: string;
             creditUsed: boolean;
             creditMinutes: number;
+            priceCents: number;
         })[];
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
         status: import("../generated/prisma/enums").ReservationStatus;
-        courtId: string;
-        trainerId: string | null;
         startsAt: Date;
+        priceCents: number;
+        trainerId: string | null;
         endsAt: Date;
         paymentMethod: import("../generated/prisma/enums").PaymentMethod;
-        priceCents: number;
         capacity: number;
         notes: string | null;
         cancelledAt: Date | null;
@@ -210,12 +247,11 @@ export declare class ReservationsController {
         createdAt: Date;
         updatedAt: Date;
         status: import("../generated/prisma/enums").ReservationStatus;
-        courtId: string;
-        trainerId: string | null;
         startsAt: Date;
+        priceCents: number;
+        trainerId: string | null;
         endsAt: Date;
         paymentMethod: import("../generated/prisma/enums").PaymentMethod;
-        priceCents: number;
         capacity: number;
         notes: string | null;
         cancelledAt: Date | null;

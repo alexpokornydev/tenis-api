@@ -10,10 +10,11 @@ exports.AuthModule = void 0;
 const common_1 = require("@nestjs/common");
 const auth_guard_1 = require("./auth.guard");
 const token_verifier_1 = require("./token-verifier");
+const profile_provisioner_1 = require("./profile-provisioner");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
 exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Global)(),
-    (0, common_1.Module)({ providers: [token_verifier_1.TokenVerifier, auth_guard_1.AuthGuard], exports: [auth_guard_1.AuthGuard, token_verifier_1.TokenVerifier] })
+    (0, common_1.Module)({ providers: [token_verifier_1.TokenVerifier, auth_guard_1.AuthGuard, profile_provisioner_1.ProfileProvisioner], exports: [auth_guard_1.AuthGuard, token_verifier_1.TokenVerifier, profile_provisioner_1.ProfileProvisioner] })
 ], AuthModule);

@@ -18,6 +18,10 @@ export declare class AnnouncementsController {
         publishedAt: Date | null;
         authorId: string;
     })[]>;
+    remove(id: string): Promise<{
+        success: boolean;
+        id: string;
+    }>;
     create(body: unknown, user: AuthenticatedUser): import("../generated/prisma/models").Prisma__AnnouncementClient<{
         author: {
             id: string;

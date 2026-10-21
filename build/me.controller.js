@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MeController = void 0;
 const common_1 = require("@nestjs/common");
+const zod_1 = require("zod");
 const auth_guard_1 = require("./auth/auth.guard");
 const current_user_decorator_1 = require("./auth/current-user.decorator");
 const prisma_service_1 = require("./prisma/prisma.service");
@@ -24,17 +25,36 @@ let MeController = class MeController {
     }
     async getMe(user) {
         try {
-            const profile = await this.prisma.profile.findUnique({ where: { id: user.id }, include: { membership: true, credit: { select: { balanceMinutes: true, reservedMinutes: true } } } });
+            const profile = await this.prisma.profile.findUnique({ where: { id: user.id }, select: { id: true, email: true, fullName: true, phone: true, role: true, membership: true, credit: { select: { balanceMinutes: true, reservedMinutes: true } } } });
             if (!profile)
-                throw new Error('Verified profile is missing after authentication guard completed.');
+                throw new common_1.InternalServerErrorException({ message: 'Profile not found after authentication.', code: 'PROFILE_NOT_FOUND' });
             return { id: profile.id, email: profile.email, fullName: profile.fullName, phone: profile.phone, role: profile.role, membership: profile.membership, credit: profile.credit };
         }
         catch (error) {
-            throw new common_1.InternalServerErrorException({
-                message: 'The API verified the Supabase account but could not load its profile.',
-                code: error instanceof Error ? error.code ?? error.name : 'UNKNOWN_PROFILE_ERROR',
-            });
+            if (error instanceof common_1.InternalServerErrorException)
+                throw error;
+            const prismaError = error;
+            const code = typeof prismaError?.code === 'string' ? prismaError.code : typeof prismaError?.meta?.code === 'string' ? prismaError.meta.code : error instanceof Error ? error.name : 'UNKNOWN_PROFILE_ERROR';
+            console.error('[me] Profile query failed', { code, error: error instanceof Error ? error.message : String(error) });
+            throw new common_1.InternalServerErrorException({ message: 'The API could not load the profile from the database.', code });
         }
+    }
+    async updateMe(user, body) {
+        const parsed = zod_1.z.object({
+            email: zod_1.z.string().trim().email().max(320),
+            phone: zod_1.z.string().trim().max(40).nullable(),
+        }).safeParse(body);
+        if (!parsed.success)
+            throw new common_1.BadRequestException('Zadejte platný e-mail a telefon do 40 znaků.');
+        const existing = await this.prisma.profile.findFirst({ where: { email: parsed.data.email, id: { not: user.id } }, select: { id: true } });
+        if (existing)
+            throw new common_1.BadRequestException('Tento e-mail už používá jiný účet.');
+        const profile = await this.prisma.profile.update({
+            where: { id: user.id },
+            data: { email: parsed.data.email, phone: parsed.data.phone?.trim() || null },
+            include: { membership: true, credit: { select: { balanceMinutes: true, reservedMinutes: true } } },
+        });
+        return { id: profile.id, email: profile.email, fullName: profile.fullName, phone: profile.phone, role: profile.role, membership: profile.membership, credit: profile.credit };
     }
 };
 exports.MeController = MeController;
@@ -45,6 +65,14 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], MeController.prototype, "getMe", null);
+__decorate([
+    (0, common_1.Patch)(),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], MeController.prototype, "updateMe", null);
 exports.MeController = MeController = __decorate([
     (0, common_1.Controller)('me'),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),

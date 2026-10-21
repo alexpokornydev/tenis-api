@@ -11,10 +11,13 @@ import { HealthController } from './health.controller';
 import { MeController } from './me.controller';
 import { ReservationsModule } from './reservations/reservations.module';
 import { AnnouncementsModule } from './announcements/announcements.module';
+import { TrainersModule } from './trainers/trainers.module';
+import { ClubSettingsController } from './club-settings.controller';
+import { ClubReportController } from './club-report.controller';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), ThrottlerModule.forRoot([{ ttl: 60_000, limit: 120 }]), PrismaModule, AuthModule, ClientsModule, ReservationsModule, AnnouncementsModule],
-  controllers: [HealthController, MeController],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), ThrottlerModule.forRoot([{ ttl: 60_000, limit: 120 }]), PrismaModule, AuthModule, ClientsModule, TrainersModule, ReservationsModule, AnnouncementsModule],
+  controllers: [HealthController, MeController, ClubSettingsController, ClubReportController],
   providers: [{ provide: APP_GUARD, useClass: AuthGuard }, { provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}

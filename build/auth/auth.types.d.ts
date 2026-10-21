@@ -4,6 +4,7 @@ export type AuthenticatedUser = {
     id: string;
     email: string;
     role: UserRole;
+    fullName?: string;
 };
 export type AuthenticatedRequest = Request & {
     user: AuthenticatedUser;

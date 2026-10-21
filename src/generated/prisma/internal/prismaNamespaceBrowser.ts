@@ -51,11 +51,11 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  ClubSettings: 'ClubSettings',
   Profile: 'Profile',
   Membership: 'Membership',
   TrainingCredit: 'TrainingCredit',
   TrainingCreditLedger: 'TrainingCreditLedger',
-  Court: 'Court',
   Reservation: 'Reservation',
   ReservationParticipant: 'ReservationParticipant',
   CancellationRequest: 'CancellationRequest',
@@ -78,11 +78,23 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+export const ClubSettingsScalarFieldEnum = {
+  id: 'id',
+  defaultHourlyRateCents: 'defaultHourlyRateCents',
+  defaultTrainerRateCents: 'defaultTrainerRateCents',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ClubSettingsScalarFieldEnum = (typeof ClubSettingsScalarFieldEnum)[keyof typeof ClubSettingsScalarFieldEnum]
+
+
 export const ProfileScalarFieldEnum = {
   id: 'id',
   email: 'email',
   fullName: 'fullName',
   phone: 'phone',
+  trainerRateCents: 'trainerRateCents',
+  clientHourlyRateCents: 'clientHourlyRateCents',
   role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -129,19 +141,8 @@ export const TrainingCreditLedgerScalarFieldEnum = {
 export type TrainingCreditLedgerScalarFieldEnum = (typeof TrainingCreditLedgerScalarFieldEnum)[keyof typeof TrainingCreditLedgerScalarFieldEnum]
 
 
-export const CourtScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  active: 'active',
-  createdAt: 'createdAt'
-} as const
-
-export type CourtScalarFieldEnum = (typeof CourtScalarFieldEnum)[keyof typeof CourtScalarFieldEnum]
-
-
 export const ReservationScalarFieldEnum = {
   id: 'id',
-  courtId: 'courtId',
   trainerId: 'trainerId',
   startsAt: 'startsAt',
   endsAt: 'endsAt',

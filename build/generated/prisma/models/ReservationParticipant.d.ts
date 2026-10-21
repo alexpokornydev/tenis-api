@@ -398,6 +398,9 @@ export type ReservationParticipantUncheckedUpdateManyWithoutReservationNestedInp
     updateMany?: Prisma.ReservationParticipantUpdateManyWithWhereWithoutReservationInput | Prisma.ReservationParticipantUpdateManyWithWhereWithoutReservationInput[];
     deleteMany?: Prisma.ReservationParticipantScalarWhereInput | Prisma.ReservationParticipantScalarWhereInput[];
 };
+export type BoolFieldUpdateOperationsInput = {
+    set?: boolean;
+};
 export type ReservationParticipantCreateWithoutProfileInput = {
     id?: string;
     creditUsed?: boolean;

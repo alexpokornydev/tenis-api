@@ -40,11 +40,21 @@ enum CancellationRequestStatus {
   REJECTED
 }
 
+model ClubSettings {
+  id                     Int      @id @default(1)
+  defaultHourlyRateCents Int      @default(0) @map("default_hourly_rate_cents")
+  defaultTrainerRateCents Int     @default(0) @map("default_trainer_rate_cents")
+  updatedAt              DateTime @updatedAt @map("updated_at")
+  @@map("club_settings")
+}
+
 model Profile {
   id                    String                    @id @db.Uuid
   email                 String                    @unique
   fullName              String                    @map("full_name")
   phone                 String?
+  trainerRateCents      Int?                      @map("trainer_rate_cents")
+  clientHourlyRateCents Int?                      @map("client_hourly_rate_cents")
   role                  UserRole                  @default(CLIENT)
   createdAt             DateTime                  @default(now()) @map("created_at")
   updatedAt             DateTime                  @updatedAt @map("updated_at")
@@ -97,18 +107,10 @@ model TrainingCreditLedger {
   @@map("training_credit_ledger")
 }
 
-model Court {
-  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name         String        @unique
-  active       Boolean       @default(true)
-  createdAt    DateTime      @default(now()) @map("created_at")
-  reservations Reservation[]
-  @@map("courts")
-}
 
 model Reservation {
   id                   String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  courtId              String                   @map("court_id") @db.Uuid
+
   trainerId            String?                  @map("trainer_id") @db.Uuid
   startsAt             DateTime                 @map("starts_at") @db.Timestamptz(3)
   endsAt               DateTime                 @map("ends_at") @db.Timestamptz(3)
@@ -122,14 +124,13 @@ model Reservation {
   createdBy            String                   @map("created_by") @db.Uuid
   createdAt            DateTime                 @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt            DateTime                 @updatedAt @map("updated_at") @db.Timestamptz(3)
-  court                Court                    @relation(fields: [courtId], references: [id], onDelete: Restrict)
+
   trainer              Profile?                 @relation("TrainerReservations", fields: [trainerId], references: [id], onDelete: SetNull)
   creator              Profile                  @relation("ReservationCreator", fields: [createdBy], references: [id], onDelete: Restrict)
   participants         ReservationParticipant[]
   cancellationRequests CancellationRequest[]
   @@index([startsAt, endsAt])
   @@index([trainerId, startsAt])
-  @@index([courtId, startsAt])
   @@map("reservations")
 }
 

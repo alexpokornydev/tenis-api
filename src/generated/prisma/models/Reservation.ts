@@ -38,7 +38,6 @@ export type ReservationSumAggregateOutputType = {
 
 export type ReservationMinAggregateOutputType = {
   id: string | null
-  courtId: string | null
   trainerId: string | null
   startsAt: Date | null
   endsAt: Date | null
@@ -56,7 +55,6 @@ export type ReservationMinAggregateOutputType = {
 
 export type ReservationMaxAggregateOutputType = {
   id: string | null
-  courtId: string | null
   trainerId: string | null
   startsAt: Date | null
   endsAt: Date | null
@@ -74,7 +72,6 @@ export type ReservationMaxAggregateOutputType = {
 
 export type ReservationCountAggregateOutputType = {
   id: number
-  courtId: number
   trainerId: number
   startsAt: number
   endsAt: number
@@ -104,7 +101,6 @@ export type ReservationSumAggregateInputType = {
 
 export type ReservationMinAggregateInputType = {
   id?: true
-  courtId?: true
   trainerId?: true
   startsAt?: true
   endsAt?: true
@@ -122,7 +118,6 @@ export type ReservationMinAggregateInputType = {
 
 export type ReservationMaxAggregateInputType = {
   id?: true
-  courtId?: true
   trainerId?: true
   startsAt?: true
   endsAt?: true
@@ -140,7 +135,6 @@ export type ReservationMaxAggregateInputType = {
 
 export type ReservationCountAggregateInputType = {
   id?: true
-  courtId?: true
   trainerId?: true
   startsAt?: true
   endsAt?: true
@@ -245,7 +239,6 @@ export type ReservationGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 
 export type ReservationGroupByOutputType = {
   id: string
-  courtId: string
   trainerId: string | null
   startsAt: Date
   endsAt: Date
@@ -286,7 +279,6 @@ export type ReservationWhereInput = {
   OR?: Prisma.ReservationWhereInput[]
   NOT?: Prisma.ReservationWhereInput | Prisma.ReservationWhereInput[]
   id?: Prisma.UuidFilter<"Reservation"> | string
-  courtId?: Prisma.UuidFilter<"Reservation"> | string
   trainerId?: Prisma.UuidNullableFilter<"Reservation"> | string | null
   startsAt?: Prisma.DateTimeFilter<"Reservation"> | Date | string
   endsAt?: Prisma.DateTimeFilter<"Reservation"> | Date | string
@@ -300,7 +292,6 @@ export type ReservationWhereInput = {
   createdBy?: Prisma.UuidFilter<"Reservation"> | string
   createdAt?: Prisma.DateTimeFilter<"Reservation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Reservation"> | Date | string
-  court?: Prisma.XOR<Prisma.CourtScalarRelationFilter, Prisma.CourtWhereInput>
   trainer?: Prisma.XOR<Prisma.ProfileNullableScalarRelationFilter, Prisma.ProfileWhereInput> | null
   creator?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
   participants?: Prisma.ReservationParticipantListRelationFilter
@@ -309,7 +300,6 @@ export type ReservationWhereInput = {
 
 export type ReservationOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  courtId?: Prisma.SortOrder
   trainerId?: Prisma.SortOrderInput | Prisma.SortOrder
   startsAt?: Prisma.SortOrder
   endsAt?: Prisma.SortOrder
@@ -323,7 +313,6 @@ export type ReservationOrderByWithRelationInput = {
   createdBy?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  court?: Prisma.CourtOrderByWithRelationInput
   trainer?: Prisma.ProfileOrderByWithRelationInput
   creator?: Prisma.ProfileOrderByWithRelationInput
   participants?: Prisma.ReservationParticipantOrderByRelationAggregateInput
@@ -335,7 +324,6 @@ export type ReservationWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.ReservationWhereInput | Prisma.ReservationWhereInput[]
   OR?: Prisma.ReservationWhereInput[]
   NOT?: Prisma.ReservationWhereInput | Prisma.ReservationWhereInput[]
-  courtId?: Prisma.UuidFilter<"Reservation"> | string
   trainerId?: Prisma.UuidNullableFilter<"Reservation"> | string | null
   startsAt?: Prisma.DateTimeFilter<"Reservation"> | Date | string
   endsAt?: Prisma.DateTimeFilter<"Reservation"> | Date | string
@@ -349,7 +337,6 @@ export type ReservationWhereUniqueInput = Prisma.AtLeast<{
   createdBy?: Prisma.UuidFilter<"Reservation"> | string
   createdAt?: Prisma.DateTimeFilter<"Reservation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Reservation"> | Date | string
-  court?: Prisma.XOR<Prisma.CourtScalarRelationFilter, Prisma.CourtWhereInput>
   trainer?: Prisma.XOR<Prisma.ProfileNullableScalarRelationFilter, Prisma.ProfileWhereInput> | null
   creator?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
   participants?: Prisma.ReservationParticipantListRelationFilter
@@ -358,7 +345,6 @@ export type ReservationWhereUniqueInput = Prisma.AtLeast<{
 
 export type ReservationOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  courtId?: Prisma.SortOrder
   trainerId?: Prisma.SortOrderInput | Prisma.SortOrder
   startsAt?: Prisma.SortOrder
   endsAt?: Prisma.SortOrder
@@ -384,7 +370,6 @@ export type ReservationScalarWhereWithAggregatesInput = {
   OR?: Prisma.ReservationScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ReservationScalarWhereWithAggregatesInput | Prisma.ReservationScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"Reservation"> | string
-  courtId?: Prisma.UuidWithAggregatesFilter<"Reservation"> | string
   trainerId?: Prisma.UuidNullableWithAggregatesFilter<"Reservation"> | string | null
   startsAt?: Prisma.DateTimeWithAggregatesFilter<"Reservation"> | Date | string
   endsAt?: Prisma.DateTimeWithAggregatesFilter<"Reservation"> | Date | string
@@ -413,7 +398,6 @@ export type ReservationCreateInput = {
   cancelledBy?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  court: Prisma.CourtCreateNestedOneWithoutReservationsInput
   trainer?: Prisma.ProfileCreateNestedOneWithoutReservationsAsTrainerInput
   creator: Prisma.ProfileCreateNestedOneWithoutReservationsCreatedInput
   participants?: Prisma.ReservationParticipantCreateNestedManyWithoutReservationInput
@@ -422,7 +406,6 @@ export type ReservationCreateInput = {
 
 export type ReservationUncheckedCreateInput = {
   id?: string
-  courtId: string
   trainerId?: string | null
   startsAt: Date | string
   endsAt: Date | string
@@ -453,7 +436,6 @@ export type ReservationUpdateInput = {
   cancelledBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  court?: Prisma.CourtUpdateOneRequiredWithoutReservationsNestedInput
   trainer?: Prisma.ProfileUpdateOneWithoutReservationsAsTrainerNestedInput
   creator?: Prisma.ProfileUpdateOneRequiredWithoutReservationsCreatedNestedInput
   participants?: Prisma.ReservationParticipantUpdateManyWithoutReservationNestedInput
@@ -462,7 +444,6 @@ export type ReservationUpdateInput = {
 
 export type ReservationUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  courtId?: Prisma.StringFieldUpdateOperationsInput | string
   trainerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -482,7 +463,6 @@ export type ReservationUncheckedUpdateInput = {
 
 export type ReservationCreateManyInput = {
   id?: string
-  courtId: string
   trainerId?: string | null
   startsAt: Date | string
   endsAt: Date | string
@@ -515,7 +495,6 @@ export type ReservationUpdateManyMutationInput = {
 
 export type ReservationUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  courtId?: Prisma.StringFieldUpdateOperationsInput | string
   trainerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -543,7 +522,6 @@ export type ReservationOrderByRelationAggregateInput = {
 
 export type ReservationCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  courtId?: Prisma.SortOrder
   trainerId?: Prisma.SortOrder
   startsAt?: Prisma.SortOrder
   endsAt?: Prisma.SortOrder
@@ -566,7 +544,6 @@ export type ReservationAvgOrderByAggregateInput = {
 
 export type ReservationMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  courtId?: Prisma.SortOrder
   trainerId?: Prisma.SortOrder
   startsAt?: Prisma.SortOrder
   endsAt?: Prisma.SortOrder
@@ -584,7 +561,6 @@ export type ReservationMaxOrderByAggregateInput = {
 
 export type ReservationMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  courtId?: Prisma.SortOrder
   trainerId?: Prisma.SortOrder
   startsAt?: Prisma.SortOrder
   endsAt?: Prisma.SortOrder
@@ -694,48 +670,6 @@ export type ReservationUncheckedUpdateManyWithoutCreatorNestedInput = {
   deleteMany?: Prisma.ReservationScalarWhereInput | Prisma.ReservationScalarWhereInput[]
 }
 
-export type ReservationCreateNestedManyWithoutCourtInput = {
-  create?: Prisma.XOR<Prisma.ReservationCreateWithoutCourtInput, Prisma.ReservationUncheckedCreateWithoutCourtInput> | Prisma.ReservationCreateWithoutCourtInput[] | Prisma.ReservationUncheckedCreateWithoutCourtInput[]
-  connectOrCreate?: Prisma.ReservationCreateOrConnectWithoutCourtInput | Prisma.ReservationCreateOrConnectWithoutCourtInput[]
-  createMany?: Prisma.ReservationCreateManyCourtInputEnvelope
-  connect?: Prisma.ReservationWhereUniqueInput | Prisma.ReservationWhereUniqueInput[]
-}
-
-export type ReservationUncheckedCreateNestedManyWithoutCourtInput = {
-  create?: Prisma.XOR<Prisma.ReservationCreateWithoutCourtInput, Prisma.ReservationUncheckedCreateWithoutCourtInput> | Prisma.ReservationCreateWithoutCourtInput[] | Prisma.ReservationUncheckedCreateWithoutCourtInput[]
-  connectOrCreate?: Prisma.ReservationCreateOrConnectWithoutCourtInput | Prisma.ReservationCreateOrConnectWithoutCourtInput[]
-  createMany?: Prisma.ReservationCreateManyCourtInputEnvelope
-  connect?: Prisma.ReservationWhereUniqueInput | Prisma.ReservationWhereUniqueInput[]
-}
-
-export type ReservationUpdateManyWithoutCourtNestedInput = {
-  create?: Prisma.XOR<Prisma.ReservationCreateWithoutCourtInput, Prisma.ReservationUncheckedCreateWithoutCourtInput> | Prisma.ReservationCreateWithoutCourtInput[] | Prisma.ReservationUncheckedCreateWithoutCourtInput[]
-  connectOrCreate?: Prisma.ReservationCreateOrConnectWithoutCourtInput | Prisma.ReservationCreateOrConnectWithoutCourtInput[]
-  upsert?: Prisma.ReservationUpsertWithWhereUniqueWithoutCourtInput | Prisma.ReservationUpsertWithWhereUniqueWithoutCourtInput[]
-  createMany?: Prisma.ReservationCreateManyCourtInputEnvelope
-  set?: Prisma.ReservationWhereUniqueInput | Prisma.ReservationWhereUniqueInput[]
-  disconnect?: Prisma.ReservationWhereUniqueInput | Prisma.ReservationWhereUniqueInput[]
-  delete?: Prisma.ReservationWhereUniqueInput | Prisma.ReservationWhereUniqueInput[]
-  connect?: Prisma.ReservationWhereUniqueInput | Prisma.ReservationWhereUniqueInput[]
-  update?: Prisma.ReservationUpdateWithWhereUniqueWithoutCourtInput | Prisma.ReservationUpdateWithWhereUniqueWithoutCourtInput[]
-  updateMany?: Prisma.ReservationUpdateManyWithWhereWithoutCourtInput | Prisma.ReservationUpdateManyWithWhereWithoutCourtInput[]
-  deleteMany?: Prisma.ReservationScalarWhereInput | Prisma.ReservationScalarWhereInput[]
-}
-
-export type ReservationUncheckedUpdateManyWithoutCourtNestedInput = {
-  create?: Prisma.XOR<Prisma.ReservationCreateWithoutCourtInput, Prisma.ReservationUncheckedCreateWithoutCourtInput> | Prisma.ReservationCreateWithoutCourtInput[] | Prisma.ReservationUncheckedCreateWithoutCourtInput[]
-  connectOrCreate?: Prisma.ReservationCreateOrConnectWithoutCourtInput | Prisma.ReservationCreateOrConnectWithoutCourtInput[]
-  upsert?: Prisma.ReservationUpsertWithWhereUniqueWithoutCourtInput | Prisma.ReservationUpsertWithWhereUniqueWithoutCourtInput[]
-  createMany?: Prisma.ReservationCreateManyCourtInputEnvelope
-  set?: Prisma.ReservationWhereUniqueInput | Prisma.ReservationWhereUniqueInput[]
-  disconnect?: Prisma.ReservationWhereUniqueInput | Prisma.ReservationWhereUniqueInput[]
-  delete?: Prisma.ReservationWhereUniqueInput | Prisma.ReservationWhereUniqueInput[]
-  connect?: Prisma.ReservationWhereUniqueInput | Prisma.ReservationWhereUniqueInput[]
-  update?: Prisma.ReservationUpdateWithWhereUniqueWithoutCourtInput | Prisma.ReservationUpdateWithWhereUniqueWithoutCourtInput[]
-  updateMany?: Prisma.ReservationUpdateManyWithWhereWithoutCourtInput | Prisma.ReservationUpdateManyWithWhereWithoutCourtInput[]
-  deleteMany?: Prisma.ReservationScalarWhereInput | Prisma.ReservationScalarWhereInput[]
-}
-
 export type EnumReservationStatusFieldUpdateOperationsInput = {
   set?: $Enums.ReservationStatus
 }
@@ -785,7 +719,6 @@ export type ReservationCreateWithoutTrainerInput = {
   cancelledBy?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  court: Prisma.CourtCreateNestedOneWithoutReservationsInput
   creator: Prisma.ProfileCreateNestedOneWithoutReservationsCreatedInput
   participants?: Prisma.ReservationParticipantCreateNestedManyWithoutReservationInput
   cancellationRequests?: Prisma.CancellationRequestCreateNestedManyWithoutReservationInput
@@ -793,7 +726,6 @@ export type ReservationCreateWithoutTrainerInput = {
 
 export type ReservationUncheckedCreateWithoutTrainerInput = {
   id?: string
-  courtId: string
   startsAt: Date | string
   endsAt: Date | string
   status?: $Enums.ReservationStatus
@@ -833,7 +765,6 @@ export type ReservationCreateWithoutCreatorInput = {
   cancelledBy?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  court: Prisma.CourtCreateNestedOneWithoutReservationsInput
   trainer?: Prisma.ProfileCreateNestedOneWithoutReservationsAsTrainerInput
   participants?: Prisma.ReservationParticipantCreateNestedManyWithoutReservationInput
   cancellationRequests?: Prisma.CancellationRequestCreateNestedManyWithoutReservationInput
@@ -841,7 +772,6 @@ export type ReservationCreateWithoutCreatorInput = {
 
 export type ReservationUncheckedCreateWithoutCreatorInput = {
   id?: string
-  courtId: string
   trainerId?: string | null
   startsAt: Date | string
   endsAt: Date | string
@@ -889,7 +819,6 @@ export type ReservationScalarWhereInput = {
   OR?: Prisma.ReservationScalarWhereInput[]
   NOT?: Prisma.ReservationScalarWhereInput | Prisma.ReservationScalarWhereInput[]
   id?: Prisma.UuidFilter<"Reservation"> | string
-  courtId?: Prisma.UuidFilter<"Reservation"> | string
   trainerId?: Prisma.UuidNullableFilter<"Reservation"> | string | null
   startsAt?: Prisma.DateTimeFilter<"Reservation"> | Date | string
   endsAt?: Prisma.DateTimeFilter<"Reservation"> | Date | string
@@ -921,70 +850,6 @@ export type ReservationUpdateManyWithWhereWithoutCreatorInput = {
   data: Prisma.XOR<Prisma.ReservationUpdateManyMutationInput, Prisma.ReservationUncheckedUpdateManyWithoutCreatorInput>
 }
 
-export type ReservationCreateWithoutCourtInput = {
-  id?: string
-  startsAt: Date | string
-  endsAt: Date | string
-  status?: $Enums.ReservationStatus
-  paymentMethod?: $Enums.PaymentMethod
-  priceCents?: number
-  capacity?: number
-  notes?: string | null
-  cancelledAt?: Date | string | null
-  cancelledBy?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  trainer?: Prisma.ProfileCreateNestedOneWithoutReservationsAsTrainerInput
-  creator: Prisma.ProfileCreateNestedOneWithoutReservationsCreatedInput
-  participants?: Prisma.ReservationParticipantCreateNestedManyWithoutReservationInput
-  cancellationRequests?: Prisma.CancellationRequestCreateNestedManyWithoutReservationInput
-}
-
-export type ReservationUncheckedCreateWithoutCourtInput = {
-  id?: string
-  trainerId?: string | null
-  startsAt: Date | string
-  endsAt: Date | string
-  status?: $Enums.ReservationStatus
-  paymentMethod?: $Enums.PaymentMethod
-  priceCents?: number
-  capacity?: number
-  notes?: string | null
-  cancelledAt?: Date | string | null
-  cancelledBy?: string | null
-  createdBy: string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  participants?: Prisma.ReservationParticipantUncheckedCreateNestedManyWithoutReservationInput
-  cancellationRequests?: Prisma.CancellationRequestUncheckedCreateNestedManyWithoutReservationInput
-}
-
-export type ReservationCreateOrConnectWithoutCourtInput = {
-  where: Prisma.ReservationWhereUniqueInput
-  create: Prisma.XOR<Prisma.ReservationCreateWithoutCourtInput, Prisma.ReservationUncheckedCreateWithoutCourtInput>
-}
-
-export type ReservationCreateManyCourtInputEnvelope = {
-  data: Prisma.ReservationCreateManyCourtInput | Prisma.ReservationCreateManyCourtInput[]
-  skipDuplicates?: boolean
-}
-
-export type ReservationUpsertWithWhereUniqueWithoutCourtInput = {
-  where: Prisma.ReservationWhereUniqueInput
-  update: Prisma.XOR<Prisma.ReservationUpdateWithoutCourtInput, Prisma.ReservationUncheckedUpdateWithoutCourtInput>
-  create: Prisma.XOR<Prisma.ReservationCreateWithoutCourtInput, Prisma.ReservationUncheckedCreateWithoutCourtInput>
-}
-
-export type ReservationUpdateWithWhereUniqueWithoutCourtInput = {
-  where: Prisma.ReservationWhereUniqueInput
-  data: Prisma.XOR<Prisma.ReservationUpdateWithoutCourtInput, Prisma.ReservationUncheckedUpdateWithoutCourtInput>
-}
-
-export type ReservationUpdateManyWithWhereWithoutCourtInput = {
-  where: Prisma.ReservationScalarWhereInput
-  data: Prisma.XOR<Prisma.ReservationUpdateManyMutationInput, Prisma.ReservationUncheckedUpdateManyWithoutCourtInput>
-}
-
 export type ReservationCreateWithoutParticipantsInput = {
   id?: string
   startsAt: Date | string
@@ -998,7 +863,6 @@ export type ReservationCreateWithoutParticipantsInput = {
   cancelledBy?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  court: Prisma.CourtCreateNestedOneWithoutReservationsInput
   trainer?: Prisma.ProfileCreateNestedOneWithoutReservationsAsTrainerInput
   creator: Prisma.ProfileCreateNestedOneWithoutReservationsCreatedInput
   cancellationRequests?: Prisma.CancellationRequestCreateNestedManyWithoutReservationInput
@@ -1006,7 +870,6 @@ export type ReservationCreateWithoutParticipantsInput = {
 
 export type ReservationUncheckedCreateWithoutParticipantsInput = {
   id?: string
-  courtId: string
   trainerId?: string | null
   startsAt: Date | string
   endsAt: Date | string
@@ -1052,7 +915,6 @@ export type ReservationUpdateWithoutParticipantsInput = {
   cancelledBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  court?: Prisma.CourtUpdateOneRequiredWithoutReservationsNestedInput
   trainer?: Prisma.ProfileUpdateOneWithoutReservationsAsTrainerNestedInput
   creator?: Prisma.ProfileUpdateOneRequiredWithoutReservationsCreatedNestedInput
   cancellationRequests?: Prisma.CancellationRequestUpdateManyWithoutReservationNestedInput
@@ -1060,7 +922,6 @@ export type ReservationUpdateWithoutParticipantsInput = {
 
 export type ReservationUncheckedUpdateWithoutParticipantsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  courtId?: Prisma.StringFieldUpdateOperationsInput | string
   trainerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1090,7 +951,6 @@ export type ReservationCreateWithoutCancellationRequestsInput = {
   cancelledBy?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  court: Prisma.CourtCreateNestedOneWithoutReservationsInput
   trainer?: Prisma.ProfileCreateNestedOneWithoutReservationsAsTrainerInput
   creator: Prisma.ProfileCreateNestedOneWithoutReservationsCreatedInput
   participants?: Prisma.ReservationParticipantCreateNestedManyWithoutReservationInput
@@ -1098,7 +958,6 @@ export type ReservationCreateWithoutCancellationRequestsInput = {
 
 export type ReservationUncheckedCreateWithoutCancellationRequestsInput = {
   id?: string
-  courtId: string
   trainerId?: string | null
   startsAt: Date | string
   endsAt: Date | string
@@ -1144,7 +1003,6 @@ export type ReservationUpdateWithoutCancellationRequestsInput = {
   cancelledBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  court?: Prisma.CourtUpdateOneRequiredWithoutReservationsNestedInput
   trainer?: Prisma.ProfileUpdateOneWithoutReservationsAsTrainerNestedInput
   creator?: Prisma.ProfileUpdateOneRequiredWithoutReservationsCreatedNestedInput
   participants?: Prisma.ReservationParticipantUpdateManyWithoutReservationNestedInput
@@ -1152,7 +1010,6 @@ export type ReservationUpdateWithoutCancellationRequestsInput = {
 
 export type ReservationUncheckedUpdateWithoutCancellationRequestsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  courtId?: Prisma.StringFieldUpdateOperationsInput | string
   trainerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1171,7 +1028,6 @@ export type ReservationUncheckedUpdateWithoutCancellationRequestsInput = {
 
 export type ReservationCreateManyTrainerInput = {
   id?: string
-  courtId: string
   startsAt: Date | string
   endsAt: Date | string
   status?: $Enums.ReservationStatus
@@ -1188,7 +1044,6 @@ export type ReservationCreateManyTrainerInput = {
 
 export type ReservationCreateManyCreatorInput = {
   id?: string
-  courtId: string
   trainerId?: string | null
   startsAt: Date | string
   endsAt: Date | string
@@ -1216,7 +1071,6 @@ export type ReservationUpdateWithoutTrainerInput = {
   cancelledBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  court?: Prisma.CourtUpdateOneRequiredWithoutReservationsNestedInput
   creator?: Prisma.ProfileUpdateOneRequiredWithoutReservationsCreatedNestedInput
   participants?: Prisma.ReservationParticipantUpdateManyWithoutReservationNestedInput
   cancellationRequests?: Prisma.CancellationRequestUpdateManyWithoutReservationNestedInput
@@ -1224,7 +1078,6 @@ export type ReservationUpdateWithoutTrainerInput = {
 
 export type ReservationUncheckedUpdateWithoutTrainerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  courtId?: Prisma.StringFieldUpdateOperationsInput | string
   startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
@@ -1243,7 +1096,6 @@ export type ReservationUncheckedUpdateWithoutTrainerInput = {
 
 export type ReservationUncheckedUpdateManyWithoutTrainerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  courtId?: Prisma.StringFieldUpdateOperationsInput | string
   startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
@@ -1271,7 +1123,6 @@ export type ReservationUpdateWithoutCreatorInput = {
   cancelledBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  court?: Prisma.CourtUpdateOneRequiredWithoutReservationsNestedInput
   trainer?: Prisma.ProfileUpdateOneWithoutReservationsAsTrainerNestedInput
   participants?: Prisma.ReservationParticipantUpdateManyWithoutReservationNestedInput
   cancellationRequests?: Prisma.CancellationRequestUpdateManyWithoutReservationNestedInput
@@ -1279,7 +1130,6 @@ export type ReservationUpdateWithoutCreatorInput = {
 
 export type ReservationUncheckedUpdateWithoutCreatorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  courtId?: Prisma.StringFieldUpdateOperationsInput | string
   trainerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1298,7 +1148,6 @@ export type ReservationUncheckedUpdateWithoutCreatorInput = {
 
 export type ReservationUncheckedUpdateManyWithoutCreatorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  courtId?: Prisma.StringFieldUpdateOperationsInput | string
   trainerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1309,78 +1158,6 @@ export type ReservationUncheckedUpdateManyWithoutCreatorInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type ReservationCreateManyCourtInput = {
-  id?: string
-  trainerId?: string | null
-  startsAt: Date | string
-  endsAt: Date | string
-  status?: $Enums.ReservationStatus
-  paymentMethod?: $Enums.PaymentMethod
-  priceCents?: number
-  capacity?: number
-  notes?: string | null
-  cancelledAt?: Date | string | null
-  cancelledBy?: string | null
-  createdBy: string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type ReservationUpdateWithoutCourtInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
-  paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
-  priceCents?: Prisma.IntFieldUpdateOperationsInput | number
-  capacity?: Prisma.IntFieldUpdateOperationsInput | number
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  cancelledBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  trainer?: Prisma.ProfileUpdateOneWithoutReservationsAsTrainerNestedInput
-  creator?: Prisma.ProfileUpdateOneRequiredWithoutReservationsCreatedNestedInput
-  participants?: Prisma.ReservationParticipantUpdateManyWithoutReservationNestedInput
-  cancellationRequests?: Prisma.CancellationRequestUpdateManyWithoutReservationNestedInput
-}
-
-export type ReservationUncheckedUpdateWithoutCourtInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  trainerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
-  paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
-  priceCents?: Prisma.IntFieldUpdateOperationsInput | number
-  capacity?: Prisma.IntFieldUpdateOperationsInput | number
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  cancelledBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdBy?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  participants?: Prisma.ReservationParticipantUncheckedUpdateManyWithoutReservationNestedInput
-  cancellationRequests?: Prisma.CancellationRequestUncheckedUpdateManyWithoutReservationNestedInput
-}
-
-export type ReservationUncheckedUpdateManyWithoutCourtInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  trainerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
-  paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
-  priceCents?: Prisma.IntFieldUpdateOperationsInput | number
-  capacity?: Prisma.IntFieldUpdateOperationsInput | number
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  cancelledBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdBy?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1427,7 +1204,6 @@ export type ReservationCountOutputTypeCountCancellationRequestsArgs<ExtArgs exte
 
 export type ReservationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  courtId?: boolean
   trainerId?: boolean
   startsAt?: boolean
   endsAt?: boolean
@@ -1441,7 +1217,6 @@ export type ReservationSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   createdBy?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  court?: boolean | Prisma.CourtDefaultArgs<ExtArgs>
   trainer?: boolean | Prisma.Reservation$trainerArgs<ExtArgs>
   creator?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   participants?: boolean | Prisma.Reservation$participantsArgs<ExtArgs>
@@ -1451,7 +1226,6 @@ export type ReservationSelect<ExtArgs extends runtime.Types.Extensions.InternalA
 
 export type ReservationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  courtId?: boolean
   trainerId?: boolean
   startsAt?: boolean
   endsAt?: boolean
@@ -1465,14 +1239,12 @@ export type ReservationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   createdBy?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  court?: boolean | Prisma.CourtDefaultArgs<ExtArgs>
   trainer?: boolean | Prisma.Reservation$trainerArgs<ExtArgs>
   creator?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["reservation"]>
 
 export type ReservationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  courtId?: boolean
   trainerId?: boolean
   startsAt?: boolean
   endsAt?: boolean
@@ -1486,14 +1258,12 @@ export type ReservationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   createdBy?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  court?: boolean | Prisma.CourtDefaultArgs<ExtArgs>
   trainer?: boolean | Prisma.Reservation$trainerArgs<ExtArgs>
   creator?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["reservation"]>
 
 export type ReservationSelectScalar = {
   id?: boolean
-  courtId?: boolean
   trainerId?: boolean
   startsAt?: boolean
   endsAt?: boolean
@@ -1509,9 +1279,8 @@ export type ReservationSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ReservationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "courtId" | "trainerId" | "startsAt" | "endsAt" | "status" | "paymentMethod" | "priceCents" | "capacity" | "notes" | "cancelledAt" | "cancelledBy" | "createdBy" | "createdAt" | "updatedAt", ExtArgs["result"]["reservation"]>
+export type ReservationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "trainerId" | "startsAt" | "endsAt" | "status" | "paymentMethod" | "priceCents" | "capacity" | "notes" | "cancelledAt" | "cancelledBy" | "createdBy" | "createdAt" | "updatedAt", ExtArgs["result"]["reservation"]>
 export type ReservationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  court?: boolean | Prisma.CourtDefaultArgs<ExtArgs>
   trainer?: boolean | Prisma.Reservation$trainerArgs<ExtArgs>
   creator?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   participants?: boolean | Prisma.Reservation$participantsArgs<ExtArgs>
@@ -1519,12 +1288,10 @@ export type ReservationInclude<ExtArgs extends runtime.Types.Extensions.Internal
   _count?: boolean | Prisma.ReservationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ReservationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  court?: boolean | Prisma.CourtDefaultArgs<ExtArgs>
   trainer?: boolean | Prisma.Reservation$trainerArgs<ExtArgs>
   creator?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
 }
 export type ReservationIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  court?: boolean | Prisma.CourtDefaultArgs<ExtArgs>
   trainer?: boolean | Prisma.Reservation$trainerArgs<ExtArgs>
   creator?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
 }
@@ -1532,7 +1299,6 @@ export type ReservationIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.
 export type $ReservationPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Reservation"
   objects: {
-    court: Prisma.$CourtPayload<ExtArgs>
     trainer: Prisma.$ProfilePayload<ExtArgs> | null
     creator: Prisma.$ProfilePayload<ExtArgs>
     participants: Prisma.$ReservationParticipantPayload<ExtArgs>[]
@@ -1540,7 +1306,6 @@ export type $ReservationPayload<ExtArgs extends runtime.Types.Extensions.Interna
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    courtId: string
     trainerId: string | null
     startsAt: Date
     endsAt: Date
@@ -1948,7 +1713,6 @@ readonly fields: ReservationFieldRefs;
  */
 export interface Prisma__ReservationClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  court<T extends Prisma.CourtDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CourtDefaultArgs<ExtArgs>>): Prisma.Prisma__CourtClient<runtime.Types.Result.GetResult<Prisma.$CourtPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   trainer<T extends Prisma.Reservation$trainerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reservation$trainerArgs<ExtArgs>>): Prisma.Prisma__ProfileClient<runtime.Types.Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   creator<T extends Prisma.ProfileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProfileDefaultArgs<ExtArgs>>): Prisma.Prisma__ProfileClient<runtime.Types.Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   participants<T extends Prisma.Reservation$participantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reservation$participantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReservationParticipantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1983,7 +1747,6 @@ export interface Prisma__ReservationClient<T, Null = never, ExtArgs extends runt
  */
 export interface ReservationFieldRefs {
   readonly id: Prisma.FieldRef<"Reservation", 'String'>
-  readonly courtId: Prisma.FieldRef<"Reservation", 'String'>
   readonly trainerId: Prisma.FieldRef<"Reservation", 'String'>
   readonly startsAt: Prisma.FieldRef<"Reservation", 'DateTime'>
   readonly endsAt: Prisma.FieldRef<"Reservation", 'DateTime'>

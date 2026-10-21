@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, ParseUUIDPipe, Post, UseGuards } from '@nestjs/common';
 import { z } from 'zod';
 import { AuthGuard } from '../auth/auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -24,13 +24,20 @@ export class AnnouncementsController {
   list(@CurrentUser() user: AuthenticatedUser) {
     return this.prisma.announcement.findMany({
       where: {
-        publishedAt: { lte: new Date() },
         ...(user.role === 'CLIENT' ? { audience: { has: 'CLIENT' } } : user.role === 'TRAINER' ? { audience: { has: 'TRAINER' } } : {}),
       },
       include: { author: { select: { id: true, fullName: true } } },
       orderBy: { publishedAt: 'desc' },
       take: 100,
     });
+  }
+
+  @Delete(':id')
+  @Roles('OWNER', 'ADMIN')
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
+    const result = await this.prisma.announcement.deleteMany({ where: { id } });
+    if (result.count === 0) throw new NotFoundException('Announcement not found.');
+    return { success: true, id };
   }
 
   @Post()

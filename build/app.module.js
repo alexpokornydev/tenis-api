@@ -19,13 +19,16 @@ const health_controller_1 = require("./health.controller");
 const me_controller_1 = require("./me.controller");
 const reservations_module_1 = require("./reservations/reservations.module");
 const announcements_module_1 = require("./announcements/announcements.module");
+const trainers_module_1 = require("./trainers/trainers.module");
+const club_settings_controller_1 = require("./club-settings.controller");
+const club_report_controller_1 = require("./club-report.controller");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [config_1.ConfigModule.forRoot({ isGlobal: true }), throttler_1.ThrottlerModule.forRoot([{ ttl: 60_000, limit: 120 }]), prisma_module_1.PrismaModule, auth_module_1.AuthModule, clients_module_1.ClientsModule, reservations_module_1.ReservationsModule, announcements_module_1.AnnouncementsModule],
-        controllers: [health_controller_1.HealthController, me_controller_1.MeController],
+        imports: [config_1.ConfigModule.forRoot({ isGlobal: true }), throttler_1.ThrottlerModule.forRoot([{ ttl: 60_000, limit: 120 }]), prisma_module_1.PrismaModule, auth_module_1.AuthModule, clients_module_1.ClientsModule, trainers_module_1.TrainersModule, reservations_module_1.ReservationsModule, announcements_module_1.AnnouncementsModule],
+        controllers: [health_controller_1.HealthController, me_controller_1.MeController, club_settings_controller_1.ClubSettingsController, club_report_controller_1.ClubReportController],
         providers: [{ provide: core_1.APP_GUARD, useClass: auth_guard_1.AuthGuard }, { provide: core_1.APP_GUARD, useClass: throttler_1.ThrottlerGuard }],
     })
 ], AppModule);

@@ -22,7 +22,7 @@ const roles_1 = require("../auth/roles");
 const current_user_decorator_1 = require("../auth/current-user.decorator");
 const prisma_service_1 = require("../prisma/prisma.service");
 const settlement_service_1 = require("./settlement.service");
-const createSchema = zod_1.z.object({ courtId: zod_1.z.uuid(), trainerId: zod_1.z.uuid().optional(), startsAt: zod_1.z.iso.datetime(), endsAt: zod_1.z.iso.datetime(), participantIds: zod_1.z.array(zod_1.z.uuid()).min(1).max(12), paymentMethod: zod_1.z.enum(['FREE_TRAINING', 'CASH', 'CARD', 'BANK_TRANSFER']).default('CASH'), priceCents: zod_1.z.number().int().min(0).default(0), capacity: zod_1.z.number().int().min(1).max(12).default(1) });
+const createSchema = zod_1.z.object({ trainerId: zod_1.z.uuid().optional(), startsAt: zod_1.z.iso.datetime(), endsAt: zod_1.z.iso.datetime(), participantIds: zod_1.z.array(zod_1.z.uuid()).min(1).max(12), paymentMethod: zod_1.z.enum(['FREE_TRAINING', 'CASH', 'CARD', 'BANK_TRANSFER']).default('CASH'), priceCents: zod_1.z.number().int().min(0).optional(), capacity: zod_1.z.number().int().min(1).max(12).default(1) });
 const cancellationSchema = zod_1.z.object({ reason: zod_1.z.string().trim().max(500).optional() });
 let ReservationsController = class ReservationsController {
     prisma;
@@ -31,23 +31,41 @@ let ReservationsController = class ReservationsController {
         this.prisma = prisma;
         this.settlement = settlement;
     }
-    async options() {
-        const [clients, trainers, courts] = await Promise.all([
-            this.prisma.profile.findMany({ where: { role: 'CLIENT' }, select: { id: true, fullName: true, email: true, membership: { select: { status: true, validUntil: true } }, credit: { select: { balanceMinutes: true, reservedMinutes: true } } }, orderBy: { fullName: 'asc' }, take: 500 }),
-            this.prisma.profile.findMany({ where: { role: 'TRAINER' }, select: { id: true, fullName: true }, orderBy: { fullName: 'asc' } }),
-            this.prisma.court.findMany({ where: { active: true }, select: { id: true, name: true }, orderBy: { name: 'asc' } }),
+    async options(user) {
+        if (user.role !== 'OWNER' && user.role !== 'ADMIN')
+            throw new common_1.ForbiddenException('Only club administrators can load reservation options.');
+        const [clients, trainers, settings] = await Promise.all([
+            this.prisma.profile.findMany({ where: { role: 'CLIENT' }, select: { id: true, fullName: true, email: true, clientHourlyRateCents: true, membership: { select: { status: true, validUntil: true } }, credit: { select: { balanceMinutes: true, reservedMinutes: true } } }, orderBy: { fullName: 'asc' }, take: 500 }),
+            this.prisma.profile.findMany({ where: { role: 'TRAINER' }, select: { id: true, fullName: true, trainerRateCents: true }, orderBy: { fullName: 'asc' } }),
+            this.prisma.clubSettings.findUnique({ where: { id: 1 } }),
         ]);
-        return { clients, trainers, courts };
+        const effectiveSettings = settings ?? { id: 1, defaultHourlyRateCents: 60000, defaultTrainerRateCents: 20000 };
+        return {
+            clients: clients.map((client) => ({ ...client, effectiveClientHourlyRateCents: client.clientHourlyRateCents ?? effectiveSettings.defaultHourlyRateCents })),
+            trainers: trainers.map((trainer) => ({ ...trainer, effectiveTrainerRateCents: trainer.trainerRateCents ?? effectiveSettings.defaultTrainerRateCents })),
+            settings: effectiveSettings,
+        };
+    }
+    listCancellationRequests() {
+        return this.prisma.cancellationRequest.findMany({
+            where: { status: 'PENDING' },
+            include: {
+                requester: { select: { id: true, fullName: true, email: true } },
+                reservation: { include: { trainer: { select: { id: true, fullName: true } }, participants: { include: { profile: { select: { id: true, fullName: true } } } } } },
+            },
+            orderBy: { createdAt: 'asc' },
+            take: 200,
+        });
     }
     list(user, from, to) {
         const where = {
             ...(user.role === 'CLIENT' ? { participants: { some: { profileId: user.id } } } : user.role === 'TRAINER' ? { trainerId: user.id } : {}),
             ...(from || to ? { startsAt: { ...(from ? { gte: new Date(from) } : {}), ...(to ? { lt: new Date(to) } : {}) } } : {}),
         };
-        return this.prisma.reservation.findMany({ where, include: { court: true, trainer: { select: { id: true, fullName: true } }, participants: { include: { profile: { select: { id: true, fullName: true } } } } }, orderBy: { startsAt: 'asc' }, take: 200 });
+        return this.prisma.reservation.findMany({ where, include: { trainer: { select: { id: true, fullName: true } }, participants: { include: { profile: { select: { id: true, fullName: true } } } } }, orderBy: { startsAt: 'asc' }, take: 200 });
     }
     async get(id, user) {
-        const reservation = await this.prisma.reservation.findUnique({ where: { id }, include: { court: true, trainer: { select: { id: true, fullName: true } }, participants: { include: { profile: { select: { id: true, fullName: true } } } } } });
+        const reservation = await this.prisma.reservation.findUnique({ where: { id }, include: { trainer: { select: { id: true, fullName: true } }, participants: { include: { profile: { select: { id: true, fullName: true } } } } } });
         if (!reservation)
             throw new common_1.BadRequestException('Reservation not found.');
         const allowed = user.role === 'OWNER' || user.role === 'ADMIN' || (user.role === 'TRAINER' ? reservation.trainerId === user.id : reservation.participants.some((participant) => participant.profile.id === user.id));
@@ -56,36 +74,55 @@ let ReservationsController = class ReservationsController {
         return reservation;
     }
     async create(body, user) {
+        if (user.role !== 'OWNER' && user.role !== 'ADMIN')
+            throw new common_1.ForbiddenException('Only club administrators can create reservations.');
         const parsed = createSchema.safeParse(body);
         if (!parsed.success)
             throw new common_1.BadRequestException(parsed.error.issues.map((issue) => issue.message).join('; '));
         const data = parsed.data;
         const startsAt = new Date(data.startsAt), endsAt = new Date(data.endsAt);
-        if (startsAt <= new Date() || endsAt <= startsAt)
-            throw new common_1.BadRequestException('Reservation must be in the future and end after it starts.');
+        if (!Number.isFinite(startsAt.getTime()) || !Number.isFinite(endsAt.getTime()) || startsAt <= new Date() || endsAt <= startsAt)
+            throw new common_1.BadRequestException('Reservation must have valid future start and end times.');
         const duration = Math.ceil((endsAt.getTime() - startsAt.getTime()) / 60_000);
-        return this.prisma.$transaction(async (tx) => {
-            const court = await tx.court.findFirst({ where: { id: data.courtId, active: true } });
-            if (!court)
-                throw new common_1.BadRequestException('Active court not found.');
-            const participants = await tx.profile.findMany({ where: { id: { in: data.participantIds }, role: 'CLIENT' }, select: { id: true } });
-            if (participants.length !== data.participantIds.length || participants.length > data.capacity)
-                throw new common_1.BadRequestException('Invalid participants or capacity.');
-            const overlap = await tx.reservation.findFirst({ where: { status: 'RESERVED', startsAt: { lt: endsAt }, endsAt: { gt: startsAt }, OR: [{ courtId: data.courtId }, ...(data.trainerId ? [{ trainerId: data.trainerId }] : [])] } });
-            if (overlap)
-                throw new common_1.ConflictException('Court or trainer is already booked for this time.');
-            if (data.paymentMethod === 'FREE_TRAINING') {
-                for (const participant of participants) {
-                    const credit = await tx.trainingCredit.findUnique({ where: { profileId: participant.id } });
-                    if (!credit || credit.balanceMinutes - credit.reservedMinutes < duration)
-                        throw new common_1.BadRequestException('Client has insufficient available training credit.');
-                    const hold = await tx.trainingCredit.updateMany({ where: { profileId: participant.id, balanceMinutes: { gte: duration }, reservedMinutes: { lte: credit.balanceMinutes - duration } }, data: { reservedMinutes: { increment: duration } } });
-                    if (hold.count !== 1)
-                        throw new common_1.ConflictException('Training credit changed while this reservation was being created.');
+        try {
+            return await this.prisma.$transaction(async (tx) => {
+                const participantIds = [...new Set(data.participantIds)];
+                if (participantIds.length !== data.participantIds.length)
+                    throw new common_1.BadRequestException('Each client can only be added once to a reservation.');
+                const participants = await tx.profile.findMany({ where: { id: { in: participantIds }, role: 'CLIENT' }, select: { id: true } });
+                if (participants.length !== participantIds.length || participants.length > data.capacity)
+                    throw new common_1.BadRequestException('Selected clients are invalid or exceed the reservation capacity.');
+                if (data.trainerId) {
+                    const trainer = await tx.profile.findFirst({ where: { id: data.trainerId, role: 'TRAINER' }, select: { id: true } });
+                    if (!trainer)
+                        throw new common_1.BadRequestException('Selected trainer was not found.');
                 }
+                const settings = await tx.clubSettings.findUnique({ where: { id: 1 } });
+                const billedHourlyRate = participants[0]?.id
+                    ? (await tx.profile.findUnique({ where: { id: participants[0].id }, select: { clientHourlyRateCents: true } }))?.clientHourlyRateCents ?? settings?.defaultHourlyRateCents ?? 0
+                    : settings?.defaultHourlyRateCents ?? 0;
+                const calculatedPriceCents = data.paymentMethod === 'CASH'
+                    ? Math.round(billedHourlyRate * duration / 60)
+                    : data.priceCents ?? 0;
+                if (data.paymentMethod === 'FREE_TRAINING') {
+                    for (const participant of participants) {
+                        const credit = await tx.trainingCredit.findUnique({ where: { profileId: participant.id } });
+                        if (!credit || credit.balanceMinutes - credit.reservedMinutes < duration)
+                            throw new common_1.BadRequestException('Client has insufficient available training credit.');
+                        const hold = await tx.trainingCredit.updateMany({ where: { profileId: participant.id, balanceMinutes: { gte: duration }, reservedMinutes: { lte: credit.balanceMinutes - duration } }, data: { reservedMinutes: { increment: duration } } });
+                        if (hold.count !== 1)
+                            throw new common_1.ConflictException('Training credit changed while this reservation was being created.');
+                    }
+                }
+                return tx.reservation.create({ data: { trainerId: data.trainerId, startsAt, endsAt, paymentMethod: data.paymentMethod, priceCents: calculatedPriceCents, capacity: data.capacity, createdBy: user.id, participants: { create: participants.map(({ id }) => ({ profileId: id, priceCents: calculatedPriceCents, creditUsed: data.paymentMethod === 'FREE_TRAINING', creditMinutes: data.paymentMethod === 'FREE_TRAINING' ? duration : 0 })) } }, include: { trainer: { select: { id: true, fullName: true } }, participants: { include: { profile: { select: { id: true, fullName: true } } } } } });
+            }, { isolationLevel: client_1.Prisma.TransactionIsolationLevel.Serializable });
+        }
+        catch (error) {
+            if (error instanceof client_1.Prisma.PrismaClientKnownRequestError && error.code === 'P2034') {
+                throw new common_1.ConflictException('Another reservation changed at the same time. Please retry.');
             }
-            return tx.reservation.create({ data: { courtId: data.courtId, trainerId: data.trainerId, startsAt, endsAt, paymentMethod: data.paymentMethod, priceCents: data.priceCents, capacity: data.capacity, createdBy: user.id, participants: { create: participants.map(({ id }) => ({ profileId: id, priceCents: data.priceCents, creditUsed: data.paymentMethod === 'FREE_TRAINING', creditMinutes: data.paymentMethod === 'FREE_TRAINING' ? duration : 0 })) } }, include: { court: true, participants: { include: { profile: true } } } });
-        }, { isolationLevel: client_1.Prisma.TransactionIsolationLevel.Serializable });
+            throw error;
+        }
     }
     async requestCancellation(id, body, user) {
         const parsed = cancellationSchema.safeParse(body);
@@ -100,7 +137,7 @@ let ReservationsController = class ReservationsController {
         const pending = await this.prisma.cancellationRequest.findFirst({ where: { reservationId: id, requesterId: user.id, status: 'PENDING' } });
         if (pending)
             return pending;
-        return this.prisma.cancellationRequest.create({ data: { reservationId: id, requesterId: user.id, reason: parsed.data.reason }, include: { reservation: { include: { court: true } } } });
+        return this.prisma.cancellationRequest.create({ data: { reservationId: id, requesterId: user.id, reason: parsed.data.reason }, include: { reservation: { include: { trainer: { select: { id: true, fullName: true } } } } } });
     }
     async cancel(id, user) {
         return this.prisma.$transaction(async (tx) => {
@@ -113,7 +150,7 @@ let ReservationsController = class ReservationsController {
                 await tx.trainingCredit.updateMany({ where: { profileId: participant.profileId, reservedMinutes: { gte: participant.creditMinutes } }, data: { reservedMinutes: { decrement: participant.creditMinutes } } });
             }
             await tx.cancellationRequest.updateMany({ where: { reservationId: id, status: 'PENDING' }, data: { status: 'APPROVED', reviewedBy: user.id, reviewedAt: new Date() } });
-            return tx.reservation.update({ where: { id }, data: { status: 'CANCELLED', cancelledAt: new Date(), cancelledBy: user.id }, include: { court: true, participants: { include: { profile: { select: { id: true, fullName: true } } } } } });
+            return tx.reservation.update({ where: { id }, data: { status: 'CANCELLED', cancelledAt: new Date(), cancelledBy: user.id }, include: { trainer: { select: { id: true, fullName: true } }, participants: { include: { profile: { select: { id: true, fullName: true } } } } } });
         }, { isolationLevel: client_1.Prisma.TransactionIsolationLevel.Serializable });
     }
     async complete(id, user) {
@@ -131,10 +168,18 @@ exports.ReservationsController = ReservationsController;
 __decorate([
     (0, common_1.Get)('options'),
     (0, roles_1.Roles)('OWNER', 'ADMIN'),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], ReservationsController.prototype, "options", null);
+__decorate([
+    (0, common_1.Get)('cancellation-requests'),
+    (0, roles_1.Roles)('OWNER', 'ADMIN'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], ReservationsController.prototype, "listCancellationRequests", null);
 __decorate([
     (0, common_1.Get)(),
     (0, roles_1.Roles)('OWNER', 'ADMIN', 'TRAINER', 'CLIENT'),

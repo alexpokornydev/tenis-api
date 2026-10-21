@@ -14,6 +14,13 @@ CREATE TABLE "profiles" (
   "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "updated_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE "club_settings" (
+  "id" INTEGER PRIMARY KEY DEFAULT 1,
+  "default_hourly_rate_cents" INTEGER NOT NULL DEFAULT 0,
+  "default_trainer_rate_cents" INTEGER NOT NULL DEFAULT 0,
+  "updated_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE "memberships" (
   "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(), "profile_id" UUID NOT NULL UNIQUE,
   "type" TEXT NOT NULL DEFAULT 'annual', "status" "MembershipStatus" NOT NULL DEFAULT 'ACTIVE',

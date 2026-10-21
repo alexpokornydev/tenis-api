@@ -8,11 +8,11 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/ClubSettings.js'
 export type * from './models/Profile.js'
 export type * from './models/Membership.js'
 export type * from './models/TrainingCredit.js'
 export type * from './models/TrainingCreditLedger.js'
-export type * from './models/Court.js'
 export type * from './models/Reservation.js'
 export type * from './models/ReservationParticipant.js'
 export type * from './models/CancellationRequest.js'

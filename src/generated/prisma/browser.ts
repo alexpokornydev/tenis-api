@@ -18,6 +18,11 @@ export { Prisma }
 export * as $Enums from './enums.js'
 export * from './enums.js';
 /**
+ * Model ClubSettings
+ * 
+ */
+export type ClubSettings = Prisma.ClubSettingsModel
+/**
  * Model Profile
  * 
  */
@@ -37,11 +42,6 @@ export type TrainingCredit = Prisma.TrainingCreditModel
  * 
  */
 export type TrainingCreditLedger = Prisma.TrainingCreditLedgerModel
-/**
- * Model Court
- * 
- */
-export type Court = Prisma.CourtModel
 /**
  * Model Reservation
  * 

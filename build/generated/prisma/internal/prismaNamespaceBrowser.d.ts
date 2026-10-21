@@ -11,11 +11,11 @@ export declare const DbNull: import("@prisma/client-runtime-utils").DbNullClass;
 export declare const JsonNull: import("@prisma/client-runtime-utils").JsonNullClass;
 export declare const AnyNull: import("@prisma/client-runtime-utils").AnyNullClass;
 export declare const ModelName: {
+    readonly ClubSettings: "ClubSettings";
     readonly Profile: "Profile";
     readonly Membership: "Membership";
     readonly TrainingCredit: "TrainingCredit";
     readonly TrainingCreditLedger: "TrainingCreditLedger";
-    readonly Court: "Court";
     readonly Reservation: "Reservation";
     readonly ReservationParticipant: "ReservationParticipant";
     readonly CancellationRequest: "CancellationRequest";
@@ -29,11 +29,20 @@ export declare const TransactionIsolationLevel: {
     readonly Serializable: "Serializable";
 };
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel];
+export declare const ClubSettingsScalarFieldEnum: {
+    readonly id: "id";
+    readonly defaultHourlyRateCents: "defaultHourlyRateCents";
+    readonly defaultTrainerRateCents: "defaultTrainerRateCents";
+    readonly updatedAt: "updatedAt";
+};
+export type ClubSettingsScalarFieldEnum = (typeof ClubSettingsScalarFieldEnum)[keyof typeof ClubSettingsScalarFieldEnum];
 export declare const ProfileScalarFieldEnum: {
     readonly id: "id";
     readonly email: "email";
     readonly fullName: "fullName";
     readonly phone: "phone";
+    readonly trainerRateCents: "trainerRateCents";
+    readonly clientHourlyRateCents: "clientHourlyRateCents";
     readonly role: "role";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
@@ -68,16 +77,8 @@ export declare const TrainingCreditLedgerScalarFieldEnum: {
     readonly createdAt: "createdAt";
 };
 export type TrainingCreditLedgerScalarFieldEnum = (typeof TrainingCreditLedgerScalarFieldEnum)[keyof typeof TrainingCreditLedgerScalarFieldEnum];
-export declare const CourtScalarFieldEnum: {
-    readonly id: "id";
-    readonly name: "name";
-    readonly active: "active";
-    readonly createdAt: "createdAt";
-};
-export type CourtScalarFieldEnum = (typeof CourtScalarFieldEnum)[keyof typeof CourtScalarFieldEnum];
 export declare const ReservationScalarFieldEnum: {
     readonly id: "id";
-    readonly courtId: "courtId";
     readonly trainerId: "trainerId";
     readonly startsAt: "startsAt";
     readonly endsAt: "endsAt";

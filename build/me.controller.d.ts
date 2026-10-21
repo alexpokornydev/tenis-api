@@ -11,8 +11,8 @@ export declare class MeController {
         role: import("./generated/prisma/enums").UserRole;
         membership: {
             id: string;
-            createdAt: Date;
             updatedAt: Date;
+            createdAt: Date;
             profileId: string;
             type: string;
             status: import("./generated/prisma/enums").MembershipStatus;
@@ -33,8 +33,8 @@ export declare class MeController {
         role: import("./generated/prisma/enums").UserRole;
         membership: {
             id: string;
-            createdAt: Date;
             updatedAt: Date;
+            createdAt: Date;
             profileId: string;
             type: string;
             status: import("./generated/prisma/enums").MembershipStatus;

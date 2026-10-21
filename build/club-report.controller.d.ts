@@ -54,21 +54,21 @@ export declare class ClubReportController {
                 id: string;
                 createdAt: Date;
                 profileId: string;
+                priceCents: number;
                 reservationId: string;
                 creditUsed: boolean;
                 creditMinutes: number;
-                priceCents: number;
             })[];
         } & {
             id: string;
-            createdAt: Date;
             updatedAt: Date;
+            createdAt: Date;
             status: ReservationStatus;
-            startsAt: Date;
-            priceCents: number;
             trainerId: string | null;
+            startsAt: Date;
             endsAt: Date;
             paymentMethod: import("./generated/prisma/enums").PaymentMethod;
+            priceCents: number;
             capacity: number;
             notes: string | null;
             cancelledAt: Date | null;

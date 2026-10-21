@@ -9,14 +9,14 @@ export declare class ReservationsController {
     options(user: AuthenticatedUser): Promise<{
         clients: {
             effectiveClientHourlyRateCents: number;
-            membership: {
-                status: import("../generated/prisma/enums").MembershipStatus;
-                validUntil: Date | null;
-            } | null;
             id: string;
             email: string;
             fullName: string;
             clientHourlyRateCents: number | null;
+            membership: {
+                status: import("../generated/prisma/enums").MembershipStatus;
+                validUntil: Date | null;
+            } | null;
             credit: {
                 balanceMinutes: number;
                 reservedMinutes: number;
@@ -30,9 +30,9 @@ export declare class ReservationsController {
         }[];
         settings: {
             id: number;
-            updatedAt: Date;
             defaultHourlyRateCents: number;
             defaultTrainerRateCents: number;
+            updatedAt: Date;
         } | {
             id: number;
             defaultHourlyRateCents: number;
@@ -54,21 +54,21 @@ export declare class ReservationsController {
                 id: string;
                 createdAt: Date;
                 profileId: string;
+                priceCents: number;
                 reservationId: string;
                 creditUsed: boolean;
                 creditMinutes: number;
-                priceCents: number;
             })[];
         } & {
             id: string;
-            createdAt: Date;
             updatedAt: Date;
+            createdAt: Date;
             status: import("../generated/prisma/enums").ReservationStatus;
-            startsAt: Date;
-            priceCents: number;
             trainerId: string | null;
+            startsAt: Date;
             endsAt: Date;
             paymentMethod: import("../generated/prisma/enums").PaymentMethod;
+            priceCents: number;
             capacity: number;
             notes: string | null;
             cancelledAt: Date | null;
@@ -84,8 +84,8 @@ export declare class ReservationsController {
         id: string;
         createdAt: Date;
         status: import("../generated/prisma/enums").CancellationRequestStatus;
-        reservationId: string;
         reason: string | null;
+        reservationId: string;
         requesterId: string;
         reviewedBy: string | null;
         reviewedAt: Date | null;
@@ -105,21 +105,21 @@ export declare class ReservationsController {
             id: string;
             createdAt: Date;
             profileId: string;
+            priceCents: number;
             reservationId: string;
             creditUsed: boolean;
             creditMinutes: number;
-            priceCents: number;
         })[];
     } & {
         id: string;
-        createdAt: Date;
         updatedAt: Date;
+        createdAt: Date;
         status: import("../generated/prisma/enums").ReservationStatus;
-        startsAt: Date;
-        priceCents: number;
         trainerId: string | null;
+        startsAt: Date;
         endsAt: Date;
         paymentMethod: import("../generated/prisma/enums").PaymentMethod;
+        priceCents: number;
         capacity: number;
         notes: string | null;
         cancelledAt: Date | null;
@@ -140,21 +140,21 @@ export declare class ReservationsController {
             id: string;
             createdAt: Date;
             profileId: string;
+            priceCents: number;
             reservationId: string;
             creditUsed: boolean;
             creditMinutes: number;
-            priceCents: number;
         })[];
     } & {
         id: string;
-        createdAt: Date;
         updatedAt: Date;
+        createdAt: Date;
         status: import("../generated/prisma/enums").ReservationStatus;
-        startsAt: Date;
-        priceCents: number;
         trainerId: string | null;
+        startsAt: Date;
         endsAt: Date;
         paymentMethod: import("../generated/prisma/enums").PaymentMethod;
+        priceCents: number;
         capacity: number;
         notes: string | null;
         cancelledAt: Date | null;
@@ -175,21 +175,21 @@ export declare class ReservationsController {
             id: string;
             createdAt: Date;
             profileId: string;
+            priceCents: number;
             reservationId: string;
             creditUsed: boolean;
             creditMinutes: number;
-            priceCents: number;
         })[];
     } & {
         id: string;
-        createdAt: Date;
         updatedAt: Date;
+        createdAt: Date;
         status: import("../generated/prisma/enums").ReservationStatus;
-        startsAt: Date;
-        priceCents: number;
         trainerId: string | null;
+        startsAt: Date;
         endsAt: Date;
         paymentMethod: import("../generated/prisma/enums").PaymentMethod;
+        priceCents: number;
         capacity: number;
         notes: string | null;
         cancelledAt: Date | null;
@@ -200,8 +200,8 @@ export declare class ReservationsController {
         id: string;
         createdAt: Date;
         status: import("../generated/prisma/enums").CancellationRequestStatus;
-        reservationId: string;
         reason: string | null;
+        reservationId: string;
         requesterId: string;
         reviewedBy: string | null;
         reviewedAt: Date | null;
@@ -221,21 +221,21 @@ export declare class ReservationsController {
             id: string;
             createdAt: Date;
             profileId: string;
+            priceCents: number;
             reservationId: string;
             creditUsed: boolean;
             creditMinutes: number;
-            priceCents: number;
         })[];
     } & {
         id: string;
-        createdAt: Date;
         updatedAt: Date;
+        createdAt: Date;
         status: import("../generated/prisma/enums").ReservationStatus;
-        startsAt: Date;
-        priceCents: number;
         trainerId: string | null;
+        startsAt: Date;
         endsAt: Date;
         paymentMethod: import("../generated/prisma/enums").PaymentMethod;
+        priceCents: number;
         capacity: number;
         notes: string | null;
         cancelledAt: Date | null;
@@ -244,14 +244,14 @@ export declare class ReservationsController {
     }>;
     complete(id: string, user: AuthenticatedUser): Promise<{
         id: string;
-        createdAt: Date;
         updatedAt: Date;
+        createdAt: Date;
         status: import("../generated/prisma/enums").ReservationStatus;
-        startsAt: Date;
-        priceCents: number;
         trainerId: string | null;
+        startsAt: Date;
         endsAt: Date;
         paymentMethod: import("../generated/prisma/enums").PaymentMethod;
+        priceCents: number;
         capacity: number;
         notes: string | null;
         cancelledAt: Date | null;

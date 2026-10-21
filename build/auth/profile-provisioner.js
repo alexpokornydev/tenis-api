@@ -24,13 +24,12 @@ let ProfileProvisioner = class ProfileProvisioner {
             update: {
                 email: input.email,
                 ...(input.fullName?.trim() ? { fullName: input.fullName.trim() } : {}),
-                ...(input.role !== undefined ? { role: input.role } : {}),
             },
             create: {
                 id: input.id,
                 email: input.email,
                 fullName: input.fullName?.trim() || input.email.split('@')[0],
-                role: input.role ?? client_1.UserRole.CLIENT,
+                role: client_1.UserRole.CLIENT,
             },
             select: { id: true, email: true, fullName: true, role: true },
         });

@@ -3,13 +3,12 @@ import type { CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { TokenVerifier } from './token-verifier';
 import type { AuthenticatedRequest } from './auth.types';
-import { PrismaService } from '../prisma/prisma.service';
-import { UserRole } from '../generated/prisma/client';
+
 import { ProfileProvisioner } from './profile-provisioner';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private readonly verifier: TokenVerifier, private readonly prisma: PrismaService, private readonly reflector: Reflector, private readonly provisioner: ProfileProvisioner) {}
+  constructor(private readonly verifier: TokenVerifier, private readonly reflector: Reflector, private readonly provisioner: ProfileProvisioner) {}
 
   async canActivate(context: ExecutionContext) {
     if (this.reflector.get<boolean>('isPublic', context.getHandler())) return true;
@@ -26,11 +25,7 @@ export class AuthGuard implements CanActivate {
 
     const id = verified.payload.sub;
     const email = verified.payload.email;
-    const appMetadata = verified.payload.app_metadata as { role?: unknown } | undefined;
-    const metadataRole = appMetadata?.role;
-    const role = metadataRole === UserRole.OWNER || metadataRole === UserRole.ADMIN || metadataRole === UserRole.TRAINER || metadataRole === UserRole.CLIENT
-      ? metadataRole
-      : undefined;
+
     if (typeof id !== 'string' || typeof email !== 'string') {
       throw new UnauthorizedException('Supabase token does not include a user id and email.');
     }
@@ -41,7 +36,7 @@ export class AuthGuard implements CanActivate {
         id,
         email,
         fullName: metadata?.full_name,
-        role,
+
       });
       request.user = { id: profile.id, email: profile.email || email, role: profile.role, fullName: profile.fullName };
       return true;

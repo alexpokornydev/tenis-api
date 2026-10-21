@@ -10,14 +10,14 @@ export declare class SettlementService implements OnModuleInit, OnModuleDestroy 
     settleEnded(): Promise<void>;
     settle(id: string, now?: Date): Promise<{
         id: string;
-        createdAt: Date;
         updatedAt: Date;
+        createdAt: Date;
         status: import("../generated/prisma/enums").ReservationStatus;
-        startsAt: Date;
-        priceCents: number;
         trainerId: string | null;
+        startsAt: Date;
         endsAt: Date;
         paymentMethod: import("../generated/prisma/enums").PaymentMethod;
+        priceCents: number;
         capacity: number;
         notes: string | null;
         cancelledAt: Date | null;

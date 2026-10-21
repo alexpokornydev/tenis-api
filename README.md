@@ -16,7 +16,7 @@ Build command: `npm run build`
 Start command: `npm run start:prod`
 Health check: `/api/v1/health`
 
-The build always runs `prisma generate` before Nest compilation. Deploy database changes with `npm run prisma:migrate` before routing real traffic.
+The build always runs `prisma generate` before Nest compilation. The production start script runs `prisma migrate deploy` before starting Nest, so the host must provide the server-only `DATABASE_URL`. For hosts that separate release and start commands, use `npm run prisma:migrate` as the release/pre-deploy command, then use `npm run start` to start the API without running migrations again.
 
 ## App
 
@@ -32,6 +32,6 @@ Only a publishable Supabase key belongs in the app. Keep `DATABASE_URL`, secret 
 
 ## Auth and profiles
 
-Clients authenticate through Supabase Auth. The API verifies Supabase JWTs and safely provisions a missing app profile as `CLIENT` on the first authenticated request. The submitted profile name is stored as the full name. The client cannot choose or elevate roles. Promote trainers and staff only through a trusted database/admin action.
+Clients authenticate through Supabase Auth. The API verifies Supabase JWTs and safely provisions a missing app profile as `CLIENT` on the first authenticated request. Sign-in never changes an existing database role, and token/user metadata cannot promote a profile. Promote trainers and staff only through a trusted database/admin action.
 
 Endpoints include public health, authenticated profile (`GET /api/v1/me`), role-protected client directory (`GET /api/v1/clients`, owner/admin only), reservation list/create/settlement, and minute-based hour credit tracking.

@@ -11,8 +11,8 @@ export declare class AnnouncementsController {
     } & {
         audience: string[];
         id: string;
-        createdAt: Date;
         updatedAt: Date;
+        createdAt: Date;
         title: string;
         body: string;
         publishedAt: Date | null;
@@ -30,8 +30,8 @@ export declare class AnnouncementsController {
     } & {
         audience: string[];
         id: string;
-        createdAt: Date;
         updatedAt: Date;
+        createdAt: Date;
         title: string;
         body: string;
         publishedAt: Date | null;

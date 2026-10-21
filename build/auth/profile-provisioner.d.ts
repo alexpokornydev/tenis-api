@@ -7,7 +7,6 @@ export declare class ProfileProvisioner {
         id: string;
         email: string;
         fullName?: string | null;
-        role?: UserRole;
     }): Promise<{
         id: string;
         email: string;

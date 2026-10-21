@@ -26,10 +26,16 @@ export declare class ClientsController {
     }>;
     get(id: string): Promise<{
         effectiveClientHourlyRateCents: number;
+        id: string;
+        email: string;
+        fullName: string;
+        phone: string | null;
+        clientHourlyRateCents: number | null;
+        createdAt: Date;
         membership: {
             id: string;
-            createdAt: Date;
             updatedAt: Date;
+            createdAt: Date;
             profileId: string;
             type: string;
             status: import("../generated/prisma/enums").MembershipStatus;
@@ -37,12 +43,6 @@ export declare class ClientsController {
             validUntil: Date | null;
             annualFee: number;
         } | null;
-        id: string;
-        email: string;
-        fullName: string;
-        phone: string | null;
-        clientHourlyRateCents: number | null;
-        createdAt: Date;
         credit: {
             balanceMinutes: number;
             reservedMinutes: number;
@@ -55,14 +55,14 @@ export declare class ClientsController {
                 } | null;
             } & {
                 id: string;
-                createdAt: Date;
                 updatedAt: Date;
+                createdAt: Date;
                 status: import("../generated/prisma/enums").ReservationStatus;
-                startsAt: Date;
-                priceCents: number;
                 trainerId: string | null;
+                startsAt: Date;
                 endsAt: Date;
                 paymentMethod: import("../generated/prisma/enums").PaymentMethod;
+                priceCents: number;
                 capacity: number;
                 notes: string | null;
                 cancelledAt: Date | null;
@@ -73,18 +73,24 @@ export declare class ClientsController {
             id: string;
             createdAt: Date;
             profileId: string;
+            priceCents: number;
             reservationId: string;
             creditUsed: boolean;
             creditMinutes: number;
-            priceCents: number;
         })[];
     }>;
     list(search?: string): Promise<{
         effectiveClientHourlyRateCents: number;
+        id: string;
+        email: string;
+        fullName: string;
+        phone: string | null;
+        clientHourlyRateCents: number | null;
+        createdAt: Date;
         membership: {
             id: string;
-            createdAt: Date;
             updatedAt: Date;
+            createdAt: Date;
             profileId: string;
             type: string;
             status: import("../generated/prisma/enums").MembershipStatus;
@@ -92,12 +98,6 @@ export declare class ClientsController {
             validUntil: Date | null;
             annualFee: number;
         } | null;
-        id: string;
-        email: string;
-        fullName: string;
-        phone: string | null;
-        clientHourlyRateCents: number | null;
-        createdAt: Date;
         credit: {
             balanceMinutes: number;
             reservedMinutes: number;

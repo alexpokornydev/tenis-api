@@ -4,9 +4,9 @@ export declare class ClubSettingsController {
     constructor(prisma: PrismaService);
     get(): Promise<{
         id: number;
-        updatedAt: Date;
         defaultHourlyRateCents: number;
         defaultTrainerRateCents: number;
+        updatedAt: Date;
     } | {
         id: number;
         defaultHourlyRateCents: number;
@@ -14,8 +14,8 @@ export declare class ClubSettingsController {
     }>;
     update(body: unknown): Promise<{
         id: number;
-        updatedAt: Date;
         defaultHourlyRateCents: number;
         defaultTrainerRateCents: number;
+        updatedAt: Date;
     }>;
 }

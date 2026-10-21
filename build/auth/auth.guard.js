@@ -13,17 +13,13 @@ exports.AuthGuard = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@nestjs/core");
 const token_verifier_1 = require("./token-verifier");
-const prisma_service_1 = require("../prisma/prisma.service");
-const client_1 = require("../generated/prisma/client");
 const profile_provisioner_1 = require("./profile-provisioner");
 let AuthGuard = class AuthGuard {
     verifier;
-    prisma;
     reflector;
     provisioner;
-    constructor(verifier, prisma, reflector, provisioner) {
+    constructor(verifier, reflector, provisioner) {
         this.verifier = verifier;
-        this.prisma = prisma;
         this.reflector = reflector;
         this.provisioner = provisioner;
     }
@@ -43,11 +39,6 @@ let AuthGuard = class AuthGuard {
         }
         const id = verified.payload.sub;
         const email = verified.payload.email;
-        const appMetadata = verified.payload.app_metadata;
-        const metadataRole = appMetadata?.role;
-        const role = metadataRole === client_1.UserRole.OWNER || metadataRole === client_1.UserRole.ADMIN || metadataRole === client_1.UserRole.TRAINER || metadataRole === client_1.UserRole.CLIENT
-            ? metadataRole
-            : undefined;
         if (typeof id !== 'string' || typeof email !== 'string') {
             throw new common_1.UnauthorizedException('Supabase token does not include a user id and email.');
         }
@@ -57,7 +48,6 @@ let AuthGuard = class AuthGuard {
                 id,
                 email,
                 fullName: metadata?.full_name,
-                role,
             });
             request.user = { id: profile.id, email: profile.email || email, role: profile.role, fullName: profile.fullName };
             return true;
@@ -76,5 +66,5 @@ let AuthGuard = class AuthGuard {
 exports.AuthGuard = AuthGuard;
 exports.AuthGuard = AuthGuard = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [token_verifier_1.TokenVerifier, prisma_service_1.PrismaService, core_1.Reflector, profile_provisioner_1.ProfileProvisioner])
+    __metadata("design:paramtypes", [token_verifier_1.TokenVerifier, core_1.Reflector, profile_provisioner_1.ProfileProvisioner])
 ], AuthGuard);

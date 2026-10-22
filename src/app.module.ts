@@ -14,10 +14,11 @@ import { AnnouncementsModule } from './announcements/announcements.module';
 import { TrainersModule } from './trainers/trainers.module';
 import { ClubSettingsController } from './club-settings.controller';
 import { ClubReportController } from './club-report.controller';
+import { UsersController } from './users.controller';
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }), ThrottlerModule.forRoot([{ ttl: 60_000, limit: 120 }]), PrismaModule, AuthModule, ClientsModule, TrainersModule, ReservationsModule, AnnouncementsModule],
-  controllers: [HealthController, MeController, ClubSettingsController, ClubReportController],
+  controllers: [HealthController, MeController, ClubSettingsController, ClubReportController, UsersController],
   providers: [{ provide: APP_GUARD, useClass: AuthGuard }, { provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}

@@ -43,7 +43,7 @@ export class ClubReportController {
     if (!trainerId) return { total: 0, completed: 0, upcoming: 0, completedMinutes: 0, payCents: 0, reservations: [] };
     const range = this.range(from, to);
     const [trainer, reservations, settings] = await Promise.all([
-      this.prisma.profile.findFirst({ where: { id: trainerId, role: UserRole.TRAINER }, select: { id: true, fullName: true, email: true, phone: true, trainerRateCents: true } }),
+      this.prisma.profile.findFirst({ where: { id: trainerId, role: { in: [UserRole.TRAINER, UserRole.ADMIN] } }, select: { id: true, fullName: true, email: true, phone: true, trainerRateCents: true } }),
       this.prisma.reservation.findMany({ where: { trainerId, startsAt: range }, include: { participants: { include: { profile: { select: { id: true, fullName: true } } } } }, orderBy: { startsAt: 'asc' } }),
       this.prisma.clubSettings.findUnique({ where: { id: 1 } }),
     ]);

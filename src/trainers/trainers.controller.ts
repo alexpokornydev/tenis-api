@@ -15,7 +15,7 @@ export class TrainersController {
   async setRate(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown) {
     const parsed = z.object({ hourlyRate: z.number().finite().nonnegative().max(100000).nullable() }).safeParse(body);
     if (!parsed.success) throw new BadRequestException('Trainer hourly rate must be a non-negative number or null.');
-    const updated = await this.prisma.profile.updateMany({ where: { id, role: 'TRAINER' }, data: { trainerRateCents: parsed.data.hourlyRate === null ? null : Math.round(parsed.data.hourlyRate * 100) } });
+    const updated = await this.prisma.profile.updateMany({ where: { id, role: { in: ['TRAINER', 'ADMIN'] } }, data: { trainerRateCents: parsed.data.hourlyRate === null ? null : Math.round(parsed.data.hourlyRate * 100) } });
     if (!updated.count) throw new BadRequestException('Trainer not found.');
     const [trainer, settings] = await Promise.all([
       this.prisma.profile.findUnique({ where: { id }, select: { trainerRateCents: true } }),
@@ -35,16 +35,55 @@ export class TrainersController {
     const [trainers, settings] = await Promise.all([
       this.prisma.profile.findMany({
         where: {
-          role: 'TRAINER',
+          role: { in: ['TRAINER', 'ADMIN'] },
           ...(term ? { OR: [{ fullName: { contains: term, mode: 'insensitive' } }, { email: { contains: term, mode: 'insensitive' } }] } : {}),
         },
-        select: { id: true, email: true, fullName: true, phone: true, createdAt: true, trainerRateCents: true },
+        select: {
+          id: true,
+          email: true,
+          fullName: true,
+          phone: true,
+          role: true,
+          createdAt: true,
+          trainerRateCents: true,
+          reservationsAsTrainer: {
+            where: { startsAt: { gte: new Date() } },
+            orderBy: { startsAt: 'asc' },
+            take: 5,
+            include: { participants: { include: { profile: { select: { id: true, fullName: true } } } } },
+          },
+        },
         orderBy: { fullName: 'asc' },
         take: 200,
       }),
       this.prisma.clubSettings.findUnique({ where: { id: 1 } }),
     ]);
     const defaultTrainerRateCents = settings?.defaultTrainerRateCents ?? 20000;
-    return trainers.map((trainer) => ({ ...trainer, effectiveTrainerRateCents: trainer.trainerRateCents ?? defaultTrainerRateCents }));
+    const trainerIds = trainers.map(({ id }) => id);
+    const completedReservations = trainerIds.length
+      ? await this.prisma.reservation.findMany({
+        where: { trainerId: { in: trainerIds }, status: 'COMPLETED' },
+        select: { trainerId: true, startsAt: true, endsAt: true },
+      })
+      : [];
+    const completedByTrainer = new Map<string, { completed: number; completedMinutes: number }>();
+    for (const reservation of completedReservations) {
+      if (!reservation.trainerId) continue;
+      const stats = completedByTrainer.get(reservation.trainerId) ?? { completed: 0, completedMinutes: 0 };
+      stats.completed += 1;
+      stats.completedMinutes += (reservation.endsAt.getTime() - reservation.startsAt.getTime()) / 60_000;
+      completedByTrainer.set(reservation.trainerId, stats);
+    }
+    return trainers.map((trainer) => {
+      const effectiveTrainerRateCents = trainer.trainerRateCents ?? defaultTrainerRateCents;
+      const stats = completedByTrainer.get(trainer.id) ?? { completed: 0, completedMinutes: 0 };
+      return {
+        ...trainer,
+        effectiveTrainerRateCents,
+        completed: stats.completed,
+        completedMinutes: stats.completedMinutes,
+        payCents: Math.round(effectiveTrainerRateCents * stats.completedMinutes / 60),
+      };
+    });
   }
 }

@@ -34,4 +34,4 @@ Only a publishable Supabase key belongs in the app. Keep `DATABASE_URL`, secret 
 
 Clients authenticate through Supabase Auth. The API verifies Supabase JWTs and safely provisions a missing app profile as `CLIENT` on the first authenticated request. Sign-in never changes an existing database role, and token/user metadata cannot promote a profile. Promote trainers and staff only through a trusted database/admin action.
 
-Endpoints include public health, authenticated profile (`GET /api/v1/me`), role-protected client directory (`GET /api/v1/clients`, owner/admin only), reservation list/create/settlement, and minute-based hour credit tracking.
+Endpoints include public health, authenticated profile (`GET /api/v1/me`), role-protected user directory and role management (`GET /api/v1/users`, `PATCH /api/v1/users/:id/role`, owner/admin only), client and trainer directories, reservation list/create/settlement, and minute-based hour credit tracking.

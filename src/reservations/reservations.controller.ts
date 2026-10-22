@@ -88,7 +88,7 @@ export class ReservationsController {
       const participants = await tx.profile.findMany({ where: { id: { in: participantIds }, role: 'CLIENT' }, select: { id: true } });
       if (participants.length !== participantIds.length || participants.length > data.capacity) throw new BadRequestException('Selected clients are invalid or exceed the reservation capacity.');
       if (data.trainerId) {
-        const trainer = await tx.profile.findFirst({ where: { id: data.trainerId, role: 'TRAINER' }, select: { id: true } });
+        const trainer = await tx.profile.findFirst({ where: { id: data.trainerId, role: { in: ['TRAINER', 'ADMIN'] } }, select: { id: true } });
         if (!trainer) throw new BadRequestException('Selected trainer was not found.');
       }
 

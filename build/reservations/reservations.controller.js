@@ -93,7 +93,7 @@ let ReservationsController = class ReservationsController {
                 if (participants.length !== participantIds.length || participants.length > data.capacity)
                     throw new common_1.BadRequestException('Selected clients are invalid or exceed the reservation capacity.');
                 if (data.trainerId) {
-                    const trainer = await tx.profile.findFirst({ where: { id: data.trainerId, role: 'TRAINER' }, select: { id: true } });
+                    const trainer = await tx.profile.findFirst({ where: { id: data.trainerId, role: { in: ['TRAINER', 'ADMIN'] } }, select: { id: true } });
                     if (!trainer)
                         throw new common_1.BadRequestException('Selected trainer was not found.');
                 }

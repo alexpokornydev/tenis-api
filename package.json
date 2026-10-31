@@ -18,16 +18,17 @@
     "prisma:migrate:dev": "prisma migrate dev"
   },
   "dependencies": {
-    "@nestjs/common": "^11.1.0",
+    "@nestjs/common": "^11.2.8",
     "@nestjs/config": "^4.0.2",
-    "@nestjs/core": "^11.1.0",
-    "@nestjs/platform-express": "^11.1.0",
+    "@nestjs/core": "^11.2.8",
+    "@nestjs/platform-express": "^11.2.8",
     "@nestjs/throttler": "^6.7.1",
     "@prisma/adapter-pg": "^7.0.0",
     "@prisma/client": "^7.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "jose": "^6.1.0",
+    "multer": "^2.5.0",
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
@@ -37,7 +38,7 @@
     "@eslint/js": "^9.39.0",
     "@nestjs/cli": "^11.0.10",
     "@nestjs/schematics": "^11.0.8",
-    "@nestjs/testing": "^11.1.0",
+    "@nestjs/testing": "^11.2.8",
     "@types/express": "^5.0.5",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.9.2",
@@ -52,5 +53,8 @@
   },
   "prisma": {
     "schema": "prisma/schema.prisma"
+  },
+  "overrides": {
+    "multer": "^2.5.0"
   }
 }

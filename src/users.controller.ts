@@ -3,6 +3,8 @@ import { z } from 'zod';
 import { AuthGuard } from './auth/auth.guard';
 import { RolesGuard } from './auth/roles.guard';
 import { Roles } from './auth/roles';
+import { CurrentUser } from './auth/current-user.decorator';
+import type { AuthenticatedUser } from './auth/auth.types';
 import { PrismaService } from './prisma/prisma.service';
 
 const roleSchema = z.object({ role: z.enum(['OWNER', 'ADMIN', 'TRAINER', 'CLIENT']) });
@@ -25,8 +27,9 @@ export class UsersController {
   }
 
   @Patch(':id/role')
-  @Roles('OWNER', 'ADMIN')
-  async setRole(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown) {
+  @Roles('OWNER')
+  async setRole(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown, @CurrentUser() user: AuthenticatedUser) {
+    if (id === user.id) throw new BadRequestException('You cannot change your own role.');
     const parsed = roleSchema.safeParse(body);
     if (!parsed.success) throw new BadRequestException('Role must be OWNER, ADMIN, TRAINER, or CLIENT.');
 

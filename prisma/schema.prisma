@@ -138,6 +138,7 @@ model ReservationParticipant {
   id            String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   reservationId String                  @map("reservation_id") @db.Uuid
   profileId     String                  @map("profile_id") @db.Uuid
+  memberPricingApplied Boolean           @default(false) @map("member_pricing_applied")
   creditUsed    Boolean                 @default(false) @map("credit_used")
   creditMinutes Int                     @default(0) @map("credit_minutes")
   priceCents    Int                     @default(0) @map("price_cents")

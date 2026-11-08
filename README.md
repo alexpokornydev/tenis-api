@@ -8,6 +8,7 @@ Set server-only environment variables in your API host:
 
 - `DATABASE_URL`: Supabase Postgres connection string; use the Session pooler URL for IPv4 hosts and append `?sslmode=require` when needed.
 - `SUPABASE_URL`: `https://<project-ref>.supabase.co`
+- `SUPABASE_SERVICE_ROLE_KEY` or `SUPABASE_SECRET_KEY`: server-only key required to create client login accounts.
 - `HOST=0.0.0.0`
 - `PORT`: supplied by the host (usually automatic)
 - `CORS_ORIGINS`: comma-separated browser origins. Native mobile clients do not require CORS allow-list entries.
@@ -34,4 +35,4 @@ Only a publishable Supabase key belongs in the app. Keep `DATABASE_URL`, secret 
 
 Clients authenticate through Supabase Auth. The API verifies Supabase JWTs and safely provisions a missing app profile as `CLIENT` on the first authenticated request. Sign-in never changes an existing database role, and token/user metadata cannot promote a profile. Promote trainers and staff only through a trusted database/admin action.
 
-Endpoints include public health, authenticated profile (`GET /api/v1/me`), role-protected user directory and role management (`GET /api/v1/users`, `PATCH /api/v1/users/:id/role`, owner/admin only), client and trainer directories, reservation list/create/settlement, and minute-based hour credit tracking.
+Endpoints include public health, authenticated profile (`GET /api/v1/me`), role-protected user directory and role management (`GET /api/v1/users`, `PATCH /api/v1/users/:id/role`, owner/admin only), staff-created client login accounts (`POST /api/v1/clients`), client and trainer directories, reservation list/create/settlement, and minute-based hour credit tracking.

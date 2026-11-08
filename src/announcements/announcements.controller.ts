@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, ParseUUIDPipe, Post, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, ParseUUIDPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { z } from 'zod';
 import { AuthGuard } from '../auth/auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -38,6 +38,24 @@ export class AnnouncementsController {
     const result = await this.prisma.announcement.deleteMany({ where: { id } });
     if (result.count === 0) throw new NotFoundException('Announcement not found.');
     return { success: true, id };
+  }
+
+  @Patch(':id')
+  @Roles('OWNER', 'ADMIN')
+  async update(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown) {
+    const parsed = announcementSchema.safeParse(body);
+    if (!parsed.success) throw new BadRequestException(parsed.error.issues.map((issue) => issue.message).join('; '));
+    const result = await this.prisma.announcement.updateMany({
+      where: { id },
+      data: {
+        title: parsed.data.title,
+        body: parsed.data.body,
+        audience: parsed.data.audience,
+        ...(parsed.data.publishedAt ? { publishedAt: new Date(parsed.data.publishedAt) } : {}),
+      },
+    });
+    if (!result.count) throw new NotFoundException('Announcement not found.');
+    return this.prisma.announcement.findUniqueOrThrow({ where: { id }, include: { author: { select: { id: true, fullName: true } } } });
   }
 
   @Post()

@@ -1,14 +1,47 @@
-import { BadRequestException, Body, Controller, Get, NotFoundException, Param, ParseUUIDPipe, Patch, Query, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, InternalServerErrorException, NotFoundException, Param, ParseUUIDPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { z } from 'zod';
 import { AuthGuard } from '../auth/auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles';
 import { PrismaService } from '../prisma/prisma.service';
+import { ProfileProvisioner } from '../auth/profile-provisioner';
+import { SupabaseAdminService } from './supabase-admin.service';
 
 @Controller('clients')
 @UseGuards(AuthGuard, RolesGuard)
 export class ClientsController {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, private readonly supabaseAdmin: SupabaseAdminService, private readonly provisioner: ProfileProvisioner) {}
+
+  @Post()
+  @Roles('OWNER', 'ADMIN')
+  async createAccount(@Body() body: unknown) {
+    const parsed = z.object({
+      email: z.string().trim().email().max(320),
+      fullName: z.string().trim().min(2).max(120),
+      password: z.string().min(8).max(128),
+      membership: z.object({ validFrom: z.iso.date(), validUntil: z.iso.date().nullable().optional() }).optional(),
+    }).safeParse(body);
+    if (!parsed.success) throw new BadRequestException(parsed.error.issues.map((issue) => issue.message).join('; '));
+    if (parsed.data.membership?.validUntil && parsed.data.membership.validUntil < parsed.data.membership.validFrom) {
+      throw new BadRequestException('Membership end date cannot be before its start date.');
+    }
+
+    const details = { ...parsed.data, email: parsed.data.email.toLowerCase(), fullName: parsed.data.fullName.trim() };
+    const identity = await this.supabaseAdmin.createUser(details);
+    try {
+      const profile = await this.provisioner.ensureProfile({ id: identity.id, email: identity.email, fullName: details.fullName });
+      if (details.membership) {
+        const validFrom = new Date(`${details.membership.validFrom}T00:00:00.000Z`);
+        const validUntil = details.membership.validUntil ? new Date(`${details.membership.validUntil}T00:00:00.000Z`) : null;
+        await this.prisma.membership.create({ data: { profileId: profile.id, type: 'annual', status: 'ACTIVE', validFrom, validUntil } });
+      }
+      return profile;
+    } catch {
+      await this.prisma.profile.deleteMany({ where: { id: identity.id } }).catch(() => null);
+      await this.supabaseAdmin.deleteUser(identity.id);
+      throw new InternalServerErrorException('The login was created but the client profile could not be provisioned. Please retry.');
+    }
+  }
 
   @Patch(':id/membership')
   @Roles('OWNER', 'ADMIN')

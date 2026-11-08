@@ -11,7 +11,11 @@ describe('ClientsController credit management', () => {
     profile: { findFirst: jest.fn() },
     trainingCredit: { upsert: jest.fn() },
   };
-  const controller = new ClientsController(prisma as unknown as PrismaService);
+  const controller = new ClientsController(
+    prisma as unknown as PrismaService,
+    {} as never,
+    {} as never,
+  );
 
   beforeEach(() => jest.clearAllMocks());
 

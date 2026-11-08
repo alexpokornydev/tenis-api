@@ -165,6 +165,7 @@ export const ReservationParticipantScalarFieldEnum = {
   id: 'id',
   reservationId: 'reservationId',
   profileId: 'profileId',
+  memberPricingApplied: 'memberPricingApplied',
   creditUsed: 'creditUsed',
   creditMinutes: 'creditMinutes',
   priceCents: 'priceCents',

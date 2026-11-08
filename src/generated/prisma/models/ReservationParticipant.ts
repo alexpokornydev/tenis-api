@@ -40,6 +40,7 @@ export type ReservationParticipantMinAggregateOutputType = {
   id: string | null
   reservationId: string | null
   profileId: string | null
+  memberPricingApplied: boolean | null
   creditUsed: boolean | null
   creditMinutes: number | null
   priceCents: number | null
@@ -50,6 +51,7 @@ export type ReservationParticipantMaxAggregateOutputType = {
   id: string | null
   reservationId: string | null
   profileId: string | null
+  memberPricingApplied: boolean | null
   creditUsed: boolean | null
   creditMinutes: number | null
   priceCents: number | null
@@ -60,6 +62,7 @@ export type ReservationParticipantCountAggregateOutputType = {
   id: number
   reservationId: number
   profileId: number
+  memberPricingApplied: number
   creditUsed: number
   creditMinutes: number
   priceCents: number
@@ -82,6 +85,7 @@ export type ReservationParticipantMinAggregateInputType = {
   id?: true
   reservationId?: true
   profileId?: true
+  memberPricingApplied?: true
   creditUsed?: true
   creditMinutes?: true
   priceCents?: true
@@ -92,6 +96,7 @@ export type ReservationParticipantMaxAggregateInputType = {
   id?: true
   reservationId?: true
   profileId?: true
+  memberPricingApplied?: true
   creditUsed?: true
   creditMinutes?: true
   priceCents?: true
@@ -102,6 +107,7 @@ export type ReservationParticipantCountAggregateInputType = {
   id?: true
   reservationId?: true
   profileId?: true
+  memberPricingApplied?: true
   creditUsed?: true
   creditMinutes?: true
   priceCents?: true
@@ -199,6 +205,7 @@ export type ReservationParticipantGroupByOutputType = {
   id: string
   reservationId: string
   profileId: string
+  memberPricingApplied: boolean
   creditUsed: boolean
   creditMinutes: number
   priceCents: number
@@ -232,6 +239,7 @@ export type ReservationParticipantWhereInput = {
   id?: Prisma.UuidFilter<"ReservationParticipant"> | string
   reservationId?: Prisma.UuidFilter<"ReservationParticipant"> | string
   profileId?: Prisma.UuidFilter<"ReservationParticipant"> | string
+  memberPricingApplied?: Prisma.BoolFilter<"ReservationParticipant"> | boolean
   creditUsed?: Prisma.BoolFilter<"ReservationParticipant"> | boolean
   creditMinutes?: Prisma.IntFilter<"ReservationParticipant"> | number
   priceCents?: Prisma.IntFilter<"ReservationParticipant"> | number
@@ -245,6 +253,7 @@ export type ReservationParticipantOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   reservationId?: Prisma.SortOrder
   profileId?: Prisma.SortOrder
+  memberPricingApplied?: Prisma.SortOrder
   creditUsed?: Prisma.SortOrder
   creditMinutes?: Prisma.SortOrder
   priceCents?: Prisma.SortOrder
@@ -262,6 +271,7 @@ export type ReservationParticipantWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ReservationParticipantWhereInput | Prisma.ReservationParticipantWhereInput[]
   reservationId?: Prisma.UuidFilter<"ReservationParticipant"> | string
   profileId?: Prisma.UuidFilter<"ReservationParticipant"> | string
+  memberPricingApplied?: Prisma.BoolFilter<"ReservationParticipant"> | boolean
   creditUsed?: Prisma.BoolFilter<"ReservationParticipant"> | boolean
   creditMinutes?: Prisma.IntFilter<"ReservationParticipant"> | number
   priceCents?: Prisma.IntFilter<"ReservationParticipant"> | number
@@ -275,6 +285,7 @@ export type ReservationParticipantOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   reservationId?: Prisma.SortOrder
   profileId?: Prisma.SortOrder
+  memberPricingApplied?: Prisma.SortOrder
   creditUsed?: Prisma.SortOrder
   creditMinutes?: Prisma.SortOrder
   priceCents?: Prisma.SortOrder
@@ -293,6 +304,7 @@ export type ReservationParticipantScalarWhereWithAggregatesInput = {
   id?: Prisma.UuidWithAggregatesFilter<"ReservationParticipant"> | string
   reservationId?: Prisma.UuidWithAggregatesFilter<"ReservationParticipant"> | string
   profileId?: Prisma.UuidWithAggregatesFilter<"ReservationParticipant"> | string
+  memberPricingApplied?: Prisma.BoolWithAggregatesFilter<"ReservationParticipant"> | boolean
   creditUsed?: Prisma.BoolWithAggregatesFilter<"ReservationParticipant"> | boolean
   creditMinutes?: Prisma.IntWithAggregatesFilter<"ReservationParticipant"> | number
   priceCents?: Prisma.IntWithAggregatesFilter<"ReservationParticipant"> | number
@@ -301,6 +313,7 @@ export type ReservationParticipantScalarWhereWithAggregatesInput = {
 
 export type ReservationParticipantCreateInput = {
   id?: string
+  memberPricingApplied?: boolean
   creditUsed?: boolean
   creditMinutes?: number
   priceCents?: number
@@ -314,6 +327,7 @@ export type ReservationParticipantUncheckedCreateInput = {
   id?: string
   reservationId: string
   profileId: string
+  memberPricingApplied?: boolean
   creditUsed?: boolean
   creditMinutes?: number
   priceCents?: number
@@ -323,6 +337,7 @@ export type ReservationParticipantUncheckedCreateInput = {
 
 export type ReservationParticipantUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  memberPricingApplied?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditUsed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -336,6 +351,7 @@ export type ReservationParticipantUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   reservationId?: Prisma.StringFieldUpdateOperationsInput | string
   profileId?: Prisma.StringFieldUpdateOperationsInput | string
+  memberPricingApplied?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditUsed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -347,6 +363,7 @@ export type ReservationParticipantCreateManyInput = {
   id?: string
   reservationId: string
   profileId: string
+  memberPricingApplied?: boolean
   creditUsed?: boolean
   creditMinutes?: number
   priceCents?: number
@@ -355,6 +372,7 @@ export type ReservationParticipantCreateManyInput = {
 
 export type ReservationParticipantUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  memberPricingApplied?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditUsed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -365,6 +383,7 @@ export type ReservationParticipantUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   reservationId?: Prisma.StringFieldUpdateOperationsInput | string
   profileId?: Prisma.StringFieldUpdateOperationsInput | string
+  memberPricingApplied?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditUsed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -395,6 +414,7 @@ export type ReservationParticipantCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   reservationId?: Prisma.SortOrder
   profileId?: Prisma.SortOrder
+  memberPricingApplied?: Prisma.SortOrder
   creditUsed?: Prisma.SortOrder
   creditMinutes?: Prisma.SortOrder
   priceCents?: Prisma.SortOrder
@@ -410,6 +430,7 @@ export type ReservationParticipantMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   reservationId?: Prisma.SortOrder
   profileId?: Prisma.SortOrder
+  memberPricingApplied?: Prisma.SortOrder
   creditUsed?: Prisma.SortOrder
   creditMinutes?: Prisma.SortOrder
   priceCents?: Prisma.SortOrder
@@ -420,6 +441,7 @@ export type ReservationParticipantMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   reservationId?: Prisma.SortOrder
   profileId?: Prisma.SortOrder
+  memberPricingApplied?: Prisma.SortOrder
   creditUsed?: Prisma.SortOrder
   creditMinutes?: Prisma.SortOrder
   priceCents?: Prisma.SortOrder
@@ -535,6 +557,7 @@ export type BoolFieldUpdateOperationsInput = {
 
 export type ReservationParticipantCreateWithoutProfileInput = {
   id?: string
+  memberPricingApplied?: boolean
   creditUsed?: boolean
   creditMinutes?: number
   priceCents?: number
@@ -546,6 +569,7 @@ export type ReservationParticipantCreateWithoutProfileInput = {
 export type ReservationParticipantUncheckedCreateWithoutProfileInput = {
   id?: string
   reservationId: string
+  memberPricingApplied?: boolean
   creditUsed?: boolean
   creditMinutes?: number
   priceCents?: number
@@ -586,6 +610,7 @@ export type ReservationParticipantScalarWhereInput = {
   id?: Prisma.UuidFilter<"ReservationParticipant"> | string
   reservationId?: Prisma.UuidFilter<"ReservationParticipant"> | string
   profileId?: Prisma.UuidFilter<"ReservationParticipant"> | string
+  memberPricingApplied?: Prisma.BoolFilter<"ReservationParticipant"> | boolean
   creditUsed?: Prisma.BoolFilter<"ReservationParticipant"> | boolean
   creditMinutes?: Prisma.IntFilter<"ReservationParticipant"> | number
   priceCents?: Prisma.IntFilter<"ReservationParticipant"> | number
@@ -594,6 +619,7 @@ export type ReservationParticipantScalarWhereInput = {
 
 export type ReservationParticipantCreateWithoutCreditLedgerInput = {
   id?: string
+  memberPricingApplied?: boolean
   creditUsed?: boolean
   creditMinutes?: number
   priceCents?: number
@@ -606,6 +632,7 @@ export type ReservationParticipantUncheckedCreateWithoutCreditLedgerInput = {
   id?: string
   reservationId: string
   profileId: string
+  memberPricingApplied?: boolean
   creditUsed?: boolean
   creditMinutes?: number
   priceCents?: number
@@ -630,6 +657,7 @@ export type ReservationParticipantUpdateToOneWithWhereWithoutCreditLedgerInput =
 
 export type ReservationParticipantUpdateWithoutCreditLedgerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  memberPricingApplied?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditUsed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -642,6 +670,7 @@ export type ReservationParticipantUncheckedUpdateWithoutCreditLedgerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   reservationId?: Prisma.StringFieldUpdateOperationsInput | string
   profileId?: Prisma.StringFieldUpdateOperationsInput | string
+  memberPricingApplied?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditUsed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -650,6 +679,7 @@ export type ReservationParticipantUncheckedUpdateWithoutCreditLedgerInput = {
 
 export type ReservationParticipantCreateWithoutReservationInput = {
   id?: string
+  memberPricingApplied?: boolean
   creditUsed?: boolean
   creditMinutes?: number
   priceCents?: number
@@ -661,6 +691,7 @@ export type ReservationParticipantCreateWithoutReservationInput = {
 export type ReservationParticipantUncheckedCreateWithoutReservationInput = {
   id?: string
   profileId: string
+  memberPricingApplied?: boolean
   creditUsed?: boolean
   creditMinutes?: number
   priceCents?: number
@@ -697,6 +728,7 @@ export type ReservationParticipantUpdateManyWithWhereWithoutReservationInput = {
 export type ReservationParticipantCreateManyProfileInput = {
   id?: string
   reservationId: string
+  memberPricingApplied?: boolean
   creditUsed?: boolean
   creditMinutes?: number
   priceCents?: number
@@ -705,6 +737,7 @@ export type ReservationParticipantCreateManyProfileInput = {
 
 export type ReservationParticipantUpdateWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  memberPricingApplied?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditUsed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -716,6 +749,7 @@ export type ReservationParticipantUpdateWithoutProfileInput = {
 export type ReservationParticipantUncheckedUpdateWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   reservationId?: Prisma.StringFieldUpdateOperationsInput | string
+  memberPricingApplied?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditUsed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -726,6 +760,7 @@ export type ReservationParticipantUncheckedUpdateWithoutProfileInput = {
 export type ReservationParticipantUncheckedUpdateManyWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   reservationId?: Prisma.StringFieldUpdateOperationsInput | string
+  memberPricingApplied?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditUsed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -735,6 +770,7 @@ export type ReservationParticipantUncheckedUpdateManyWithoutProfileInput = {
 export type ReservationParticipantCreateManyReservationInput = {
   id?: string
   profileId: string
+  memberPricingApplied?: boolean
   creditUsed?: boolean
   creditMinutes?: number
   priceCents?: number
@@ -743,6 +779,7 @@ export type ReservationParticipantCreateManyReservationInput = {
 
 export type ReservationParticipantUpdateWithoutReservationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  memberPricingApplied?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditUsed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -754,6 +791,7 @@ export type ReservationParticipantUpdateWithoutReservationInput = {
 export type ReservationParticipantUncheckedUpdateWithoutReservationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profileId?: Prisma.StringFieldUpdateOperationsInput | string
+  memberPricingApplied?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditUsed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -764,6 +802,7 @@ export type ReservationParticipantUncheckedUpdateWithoutReservationInput = {
 export type ReservationParticipantUncheckedUpdateManyWithoutReservationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profileId?: Prisma.StringFieldUpdateOperationsInput | string
+  memberPricingApplied?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditUsed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creditMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -805,6 +844,7 @@ export type ReservationParticipantSelect<ExtArgs extends runtime.Types.Extension
   id?: boolean
   reservationId?: boolean
   profileId?: boolean
+  memberPricingApplied?: boolean
   creditUsed?: boolean
   creditMinutes?: boolean
   priceCents?: boolean
@@ -819,6 +859,7 @@ export type ReservationParticipantSelectCreateManyAndReturn<ExtArgs extends runt
   id?: boolean
   reservationId?: boolean
   profileId?: boolean
+  memberPricingApplied?: boolean
   creditUsed?: boolean
   creditMinutes?: boolean
   priceCents?: boolean
@@ -831,6 +872,7 @@ export type ReservationParticipantSelectUpdateManyAndReturn<ExtArgs extends runt
   id?: boolean
   reservationId?: boolean
   profileId?: boolean
+  memberPricingApplied?: boolean
   creditUsed?: boolean
   creditMinutes?: boolean
   priceCents?: boolean
@@ -843,13 +885,14 @@ export type ReservationParticipantSelectScalar = {
   id?: boolean
   reservationId?: boolean
   profileId?: boolean
+  memberPricingApplied?: boolean
   creditUsed?: boolean
   creditMinutes?: boolean
   priceCents?: boolean
   createdAt?: boolean
 }
 
-export type ReservationParticipantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "reservationId" | "profileId" | "creditUsed" | "creditMinutes" | "priceCents" | "createdAt", ExtArgs["result"]["reservationParticipant"]>
+export type ReservationParticipantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "reservationId" | "profileId" | "memberPricingApplied" | "creditUsed" | "creditMinutes" | "priceCents" | "createdAt", ExtArgs["result"]["reservationParticipant"]>
 export type ReservationParticipantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reservation?: boolean | Prisma.ReservationDefaultArgs<ExtArgs>
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
@@ -876,6 +919,7 @@ export type $ReservationParticipantPayload<ExtArgs extends runtime.Types.Extensi
     id: string
     reservationId: string
     profileId: string
+    memberPricingApplied: boolean
     creditUsed: boolean
     creditMinutes: number
     priceCents: number
@@ -1309,6 +1353,7 @@ export interface ReservationParticipantFieldRefs {
   readonly id: Prisma.FieldRef<"ReservationParticipant", 'String'>
   readonly reservationId: Prisma.FieldRef<"ReservationParticipant", 'String'>
   readonly profileId: Prisma.FieldRef<"ReservationParticipant", 'String'>
+  readonly memberPricingApplied: Prisma.FieldRef<"ReservationParticipant", 'Boolean'>
   readonly creditUsed: Prisma.FieldRef<"ReservationParticipant", 'Boolean'>
   readonly creditMinutes: Prisma.FieldRef<"ReservationParticipant", 'Int'>
   readonly priceCents: Prisma.FieldRef<"ReservationParticipant", 'Int'>

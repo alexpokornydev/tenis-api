@@ -27,7 +27,7 @@ export class UsersController {
   }
 
   @Patch(':id/role')
-  @Roles('OWNER')
+  @Roles('OWNER', 'ADMIN')
   async setRole(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown, @CurrentUser() user: AuthenticatedUser) {
     if (id === user.id) throw new BadRequestException('You cannot change your own role.');
     const parsed = roleSchema.safeParse(body);
